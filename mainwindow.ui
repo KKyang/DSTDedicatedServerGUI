@@ -30,7 +30,7 @@
      <attribute name="title">
       <string>Console</string>
      </attribute>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -62,7 +62,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -112,7 +112,7 @@
      <attribute name="title">
       <string>Basic Setup</string>
      </attribute>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -127,13 +127,13 @@
          <property name="title">
           <string>Basic Settings</string>
          </property>
-         <widget class="QWidget" name="">
+         <widget class="QWidget" name="layoutWidget">
           <property name="geometry">
            <rect>
             <x>10</x>
             <y>20</y>
             <width>371</width>
-            <height>178</height>
+            <height>201</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -188,18 +188,37 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string>Server intention</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_6">
              <item>
-              <widget class="QLineEdit" name="lineEdit_servername"/>
+              <widget class="QLineEdit" name="lineEdit_servername">
+               <property name="text">
+                <string>A DST Cave Server</string>
+               </property>
+              </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_serverDescription"/>
+              <widget class="QLineEdit" name="lineEdit_serverDescription">
+               <property name="text">
+                <string>Yeah!</string>
+               </property>
+              </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_serverPassword"/>
+              <widget class="QLineEdit" name="lineEdit_serverPassword">
+               <property name="text">
+                <string>12345</string>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QSpinBox" name="spinBox_serverMaxPlayers">
@@ -208,6 +227,9 @@
                </property>
                <property name="maximum">
                 <number>64</number>
+               </property>
+               <property name="value">
+                <number>10</number>
                </property>
               </widget>
              </item>
@@ -225,12 +247,18 @@
                  <property name="text">
                   <string>No</string>
                  </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
               <widget class="QComboBox" name="comboBox_gamemode">
+               <property name="currentIndex">
+                <number>1</number>
+               </property>
                <item>
                 <property name="text">
                  <string>Endless</string>
@@ -280,6 +308,15 @@
                </item>
               </widget>
              </item>
+             <item>
+              <widget class="QComboBox" name="comboBox_serverIntention">
+               <item>
+                <property name="text">
+                 <string>cooperative</string>
+                </property>
+               </item>
+              </widget>
+             </item>
             </layout>
            </item>
           </layout>
@@ -308,7 +345,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -344,7 +381,11 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
-            <widget class="QLineEdit" name="lineEdit_dedicatedServerLocation"/>
+            <widget class="QLineEdit" name="lineEdit_dedicatedServerLocation">
+             <property name="text">
+              <string>D:\SteamLibrary\SteamApps\common\Don't Starve Together Dedicated Server\bin</string>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_browseDedicatedServerLocation">
