@@ -383,7 +383,7 @@
            <item>
             <widget class="QLineEdit" name="lineEdit_dedicatedServerLocation">
              <property name="text">
-              <string>D:\SteamLibrary\SteamApps\common\Don't Starve Together Dedicated Server\bin</string>
+              <string/>
              </property>
             </widget>
            </item>
