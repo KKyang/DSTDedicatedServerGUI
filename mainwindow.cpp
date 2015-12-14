@@ -6,12 +6,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    _server_token = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "\Klei\DoNotStarveTogether\server_token.txt";
+    _server_token = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("\Klei\DoNotStarveTogether\server_token.txt");
 
     QFileInfo checkTokenFile(_server_token);
     if(!(checkTokenFile.exists() && checkTokenFile.isFile()))
     {
-        QMessageBox::warning(this, "Warning", "Missing server token files! Make sure you have one somewhere else.");
+        QMessageBox::warning(this, "Warning", "Missing server token files!\nMake sure you have one somewhere else.");
         _server_token.clear();
     }
 }
@@ -49,6 +49,27 @@ void MainWindow::on_pushButton_startServer_clicked()
         }
     }
 
+    //Check if the subfolder exists. Both folder named in dst_server, dst_
+    _dstds_folder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("\Klei\dst_server");
+    if(!checkFolder.exists(_dstds_folder))
+    {
+        checkFolder.mkpath(_dstds_folder);
+
+    }
+    else
+    {
+
+    }
+    _dstds_folder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("\Klei\dst_cave");
+    if(!checkFolder.exists(_dstds_folder))
+    {
+        checkFolder.mkpath(_dstds_folder);
+
+    }
+    else
+    {
+
+    }
 
 }
 

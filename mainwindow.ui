@@ -329,6 +329,9 @@
          </item>
          <item>
           <widget class="QLabel" name="label_2">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Server data location</string>
            </property>
@@ -355,10 +358,17 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
-            <widget class="QLineEdit" name="lineEdit_serverDataLocation"/>
+            <widget class="QLineEdit" name="lineEdit_serverDataLocation">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_browseServerDataLocation">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>Browse</string>
              </property>
