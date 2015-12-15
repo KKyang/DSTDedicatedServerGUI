@@ -231,6 +231,15 @@ void MainWindow::on_pushButton_startServer_clicked()
     {
         checkFolder.mkpath(_dstds_folder);
         writeLua(DST_CAVE, _dstds_folder + QString("/") + QString(override_lua));
+        changeSettings(DST_CAVE, "default_server_name", ui->lineEdit_servername->text());
+        changeSettings(DST_CAVE, "default_server_description", ui->lineEdit_serverDescription->text());
+        changeSettings(DST_CAVE, "max_players", ui->spinBox_serverMaxPlayers->text());
+        ui->radioButton_pvpYes->isChecked() ? changeSettings(DST_CAVE, "pvp", "true") :
+                                              changeSettings(DST_CAVE, "pvp", "false");
+        //changeSettings(DST_CAVE, "server_password", ui->lineEdit_serverPassword->text());
+        changeSettings(DST_CAVE, "server_save_slot", ui->comboBox_serverSaveSlot->currentText());
+        changeSettings(DST_CAVE, "server_intention", ui->comboBox_serverIntention->currentText());
+        changeSettings(DST_CAVE, "game_mode", ui->comboBox_gamemode->currentText());
         writeINI(DST_CAVE,_dstds_folder + QString("/") + QString(settings_ini));
 
     }
