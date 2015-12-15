@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#define server_token "server_token.txt"
 #define override_lua "worldgenoverride.lua"
 #define settings_ini "settings.ini"
 #define folder_world "gui_dst_server"
@@ -17,6 +18,7 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QFileDialog>
+//#include <QFuture>
 #include <QProcess>
 #include <QSettings>
 #include <QStandardPaths>
@@ -52,14 +54,21 @@ public:
     ~MainWindow();
 
 private slots:
+    void writeWorldMesgOnScreen();
+    void writeCaveMesgOnScreen();
     void on_pushButton_startServer_clicked();
 
     void on_pushButton_stopServer_clicked();
 
     void on_pushButton_restartServer_clicked();
 
+    void on_lineEdit_worldEdit_returnPressed();
+
+    void on_lineEdit_caveEdit_returnPressed();
+
 private:
-    void checkServerExists(QString dstds_path);
+    bool checkServerExists(QString dstds_path, bool reload_template = true);
+    bool firstServerSetup();
 
     void changeSettings(int world_num, QString name, QString value);
     void changeBasicSettingsUI(QString name, QString value);
@@ -74,7 +83,12 @@ private:
     Ui::MainWindow *ui;
     QProcess _dst_server;
     QProcess _dst_cave;
+    //QFuture<void> cave_future;
+    //QFutureWatcher<void> cave_watcher;
+    //QFuture<void> world_future;
+    //QFutureWatcher<void> world_watcher;
 
+    bool _server_found = false;
     QString _dstds_exe;
     QString _dstds_folder;
     QString _server_token;

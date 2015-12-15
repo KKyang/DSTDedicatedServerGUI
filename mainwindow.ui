@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -97,6 +97,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="pushButton_restartServer">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="whatsThis">
           <string extracomment="Restart both server at the same time."/>
          </property>
@@ -116,9 +119,9 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>60</y>
+        <y>90</y>
         <width>781</width>
-        <height>461</height>
+        <height>431</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -133,7 +136,7 @@
             <x>10</x>
             <y>20</y>
             <width>371</width>
-            <height>201</height>
+            <height>204</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -351,7 +354,7 @@
         <x>10</x>
         <y>-1</y>
         <width>781</width>
-        <height>61</height>
+        <height>91</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -360,7 +363,14 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>DST Dedicated Server location</string>
+            <string>DST dedicated server root directory</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>Server token location</string>
            </property>
           </widget>
          </item>
@@ -389,6 +399,27 @@
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_browseDedicatedServerLocation">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <item>
+            <widget class="QLineEdit" name="lineEdit_serverTokenLocation">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_browseServerTokenLocation">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="text">
               <string>Browse</string>
              </property>
