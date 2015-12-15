@@ -24,25 +24,11 @@
 #include <QSettings>
 #include <QStandardPaths>
 
+#include "ioworldgenoverridelua.h"
+#include "dstdatastructure.h"
 
-struct properties{
-    properties(){}
-    properties(QString g, QString n, QString s) : group(g), name(n), settings(s){}
-    QString group;
-    QString name;
-    QString settings;
-};
 
-struct DSTSettings{
-    QString world_name;
-    std::vector<properties> ini;
-    std::vector<properties> pro;
-};
 
-enum{
-    DST_WORLD = 0,
-    DST_CAVE = 1
-};
 
 namespace Ui {
 class MainWindow;
@@ -84,11 +70,12 @@ private:
     bool firstServerSetup();
 
     void changeSettings(int world_num, QString name, QString value);
-    void changeBasicSettingsUI(QString name, QString value);
     bool readINI(int world_num, QString file_path, bool ui_c = false);
     bool writeINI(int world_num, QString file_path);
+    void writeINIToGUI(int world_num);
     bool readLua(int world_num, QString file_path);
     bool writeLua(int world_num, QString file_path);
+    void writeLuaToGUI(int world_num);
 
     QProcess _update_mod;
     QProcess _dst_server;

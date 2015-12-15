@@ -13,8 +13,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    ioworldgenoverridelua.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    ioworldgenoverridelua.h \
+    dstdatastructure.h
 
 FORMS    += mainwindow.ui

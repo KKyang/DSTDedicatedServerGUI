@@ -145,16 +145,25 @@ bool MainWindow::checkServerExists(QString dstds_path, bool reload_template)
     QDir checkFolder;
     if(checkFolder.exists(dstds_path+ QString("/") + QString(folder_world)) && checkFolder.exists(dstds_path+ QString("/") + QString(folder_cave)))
     {
+        if(!readINI(DST_WORLD, dstds_path + QString("/") + QString(folder_cave) + QString("/") + QString(settings_ini)))
+        {
+            QMessageBox::critical(this, "Error", "Cannot found ini files in world folder!");
+            writeINIToGUI(DST_WORLD);
+            return false;
+        }
         if(!readINI(DST_CAVE, dstds_path + QString("/") + QString(folder_world) + QString("/") + QString(settings_ini)))
         {
             QMessageBox::critical(this, "Error", "Cannot found ini files in cave folder!");
             return false;
         }
-        if(!readINI(DST_WORLD, dstds_path + QString("/") + QString(folder_cave) + QString("/") + QString(settings_ini), true))
+
+        if(!readLua(DST_WORLD, dstds_path + QString("/") + QString(folder_cave) + QString("/") + QString(override_lua)))
         {
             QMessageBox::critical(this, "Error", "Cannot found ini files in world folder!");
+            writeLuaToGUI(DST_WORLD);
             return false;
         }
+
 
         disableSetttingsWhenServerExists(true);
         return true;
@@ -163,9 +172,75 @@ bool MainWindow::checkServerExists(QString dstds_path, bool reload_template)
     {
         readINI(DST_CAVE, QString("template/") + QString(ini_cave));
         readINI(DST_WORLD, QString("template/") + QString(ini_world));
+        readLua(DST_WORLD, QString("template/") + QString(override_world_lua_template));
+        writeINIToGUI(DST_WORLD);
+        writeLuaToGUI(DST_WORLD);
         disableSetttingsWhenServerExists(false);
     }
     return false;
+}
+
+void MainWindow::writeINIToGUI(int world_num)
+{
+    for(int i = 0; i < world[world_num].ini.size(); i++)
+    {
+        properties &p = world[world_num].ini[i];
+        QString name = p.name;
+        QString value = p.settings;
+
+        if(!name.compare("default_server_name")){ui->lineEdit_servername->setText(value);}
+        else if(!name.compare("default_server_description")){ui->lineEdit_serverDescription->setText(value);}
+        else if(!name.compare("max_players")){ui->spinBox_serverMaxPlayers->setValue(value.toInt());}
+        else if(!name.compare("server_password")){ui->lineEdit_serverPassword->setText(value);}
+        else if(!name.compare("server_save_slot")){ui->comboBox_serverSaveSlot->setCurrentIndex(value.toInt() - 1);}
+        else if(!name.compare("server_intention"))
+        {
+            if(!name.compare("cooperative"))
+                ui->comboBox_serverIntention->setCurrentIndex(0);
+        }
+        else if(!name.compare("game_mode"))
+        {
+            if(!name.compare("Endless"))
+                ui->comboBox_gamemode->setCurrentIndex(0);
+            else if(!name.compare("Survival"))
+                ui->comboBox_gamemode->setCurrentIndex(1);
+            else if(!name.compare("Wilderness"))
+                ui->comboBox_gamemode->setCurrentIndex(2);
+        }
+        else if(!name.compare("pvp"))
+        {
+            (!value.compare("true")) ? ui->radioButton_pvpYes->setChecked(true) : ui->radioButton_pvpNo->setChecked(true);
+        }
+    }
+}
+
+void MainWindow::writeLuaToGUI(int world_num)
+{
+    if(world_num == DST_WORLD)
+    {
+        ui->tableWidget_worldGen->clear();
+        ui->tableWidget_worldGen->setColumnCount(3);
+        ui->tableWidget_worldGen->setRowCount(world[world_num].pro.size());
+        ui->tableWidget_worldGen->setHorizontalHeaderItem(0, new QTableWidgetItem("Group"));
+        ui->tableWidget_worldGen->setHorizontalHeaderItem(1, new QTableWidgetItem("Name"));
+        QTableWidgetItem* t3 = new QTableWidgetItem("Value");
+        t3->setBackground(Qt::lightGray);
+        ui->tableWidget_worldGen->setHorizontalHeaderItem(2, t3);
+
+        for(int i = 0; i < world[world_num].pro.size(); i++)
+        {
+            properties &p = world[world_num].pro[i];
+            QTableWidgetItem* n1 = new QTableWidgetItem(p.group);
+            n1->setFlags(n1->flags() & ~Qt::ItemIsEditable);
+            ui->tableWidget_worldGen->setItem(i, 0, n1);
+            QTableWidgetItem* n2 = new QTableWidgetItem(p.name);
+            n2->setFlags(n2->flags() & ~Qt::ItemIsEditable);
+            ui->tableWidget_worldGen->setItem(i, 1, n2);
+            QTableWidgetItem* n3 = new QTableWidgetItem(p.settings);
+            n3->setBackground(Qt::lightGray);
+            ui->tableWidget_worldGen->setItem(i, 2, n3);
+        }
+    }
 }
 
 bool MainWindow::firstServerSetup()
@@ -257,33 +332,6 @@ void MainWindow::changeSettings(int world_num, QString name, QString value)
     }
 }
 
-void MainWindow::changeBasicSettingsUI(QString name, QString value)
-{
-    if(!name.compare("default_server_name")){ui->lineEdit_servername->setText(value);}
-    else if(!name.compare("default_server_description")){ui->lineEdit_serverDescription->setText(value);}
-    else if(!name.compare("max_players")){ui->spinBox_serverMaxPlayers->setValue(value.toInt());}
-    else if(!name.compare("server_password")){ui->lineEdit_serverPassword->setText(value);}
-    else if(!name.compare("server_save_slot")){ui->comboBox_serverSaveSlot->setCurrentIndex(value.toInt() - 1);}
-    else if(!name.compare("server_intention"))
-    {
-        if(!name.compare("cooperative"))
-            ui->comboBox_serverIntention->setCurrentIndex(0);
-    }
-    else if(!name.compare("game_mode"))
-    {
-        if(!name.compare("Endless"))
-            ui->comboBox_gamemode->setCurrentIndex(0);
-        else if(!name.compare("Survival"))
-            ui->comboBox_gamemode->setCurrentIndex(1);
-        else if(!name.compare("Wilderness"))
-            ui->comboBox_gamemode->setCurrentIndex(2);
-    }
-    else if(!name.compare("pvp"))
-    {
-        (!value.compare("true")) ? ui->radioButton_pvpYes->setChecked(true) : ui->radioButton_pvpNo->setChecked(true);
-    }
-}
-
 bool MainWindow::readINI(int world_num, QString file_path, bool ui_c)
 {
     QSettings settings(file_path, QSettings::IniFormat);
@@ -300,7 +348,6 @@ bool MainWindow::readINI(int world_num, QString file_path, bool ui_c)
             ini.settings = settings.value(keys[j]).toString();
 
             world[world_num].ini.push_back(ini);
-            changeBasicSettingsUI(ini.name, ini.settings);
         }
         settings.endGroup();
     }
@@ -321,24 +368,8 @@ bool MainWindow::writeINI(int world_num, QString file_path)
 // Custom lua content in app currently not supported. Please modify the template file directly to work.
 bool MainWindow::readLua(int world_num, QString file_path)
 {
-    if(world_num == DST_WORLD)
-    {
-        //        QFile file_r("template/worldgenoverride_cave.lua");
-        //        if(!file_r.open(QIODevice::ReadOnly))
-        //        {
-        //            return false;
-        //        }
-
-        //        if(file.open(QIODevice::ReadWrite))
-        //        {
-        //            QTextStream stream(&file);
-
-        //        }
-    }
-    else if(world_num == DST_CAVE)
-    {
-
-    }
+    IOWorldGenOverrideLua genlua;
+    genlua.readLuaFile(world[world_num].pro, file_path);
     return true;
 }
 
@@ -348,14 +379,7 @@ bool MainWindow::writeLua(int world_num, QString file_path)
     //QFile file_w(file_path);
     if(world_num == DST_WORLD)
     {
-        if(world[0].pro.empty())
-        {
-            return QFile::copy("template/worldgenoverride_world.lua", file_path);
-        }
-        else
-        {
-
-        }
+        return QFile::copy("template/worldgenoverride_world.lua", file_path);
     }
     else if(world_num == DST_CAVE)
     {
@@ -415,12 +439,6 @@ void MainWindow::on_pushButton_startServer_clicked()
         disableWidgetsWhenStartServer(false);
         return;
     }
-
-
-
-    //Check again if the folder changed.
-    ui->statusBar->showMessage("Check if there is an existing server.");
-    _server_found = checkServerExists(_dstds_folder, false);
 
     if(!_server_found)
     {
