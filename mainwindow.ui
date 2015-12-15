@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>DST Dedicated Server GUI</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTabWidget" name="tabWidget">
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -83,6 +83,9 @@
          <property name="text">
           <string>Start Server</string>
          </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -92,6 +95,12 @@
          </property>
          <property name="text">
           <string>Stop Server</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -136,7 +145,7 @@
             <x>10</x>
             <y>20</y>
             <width>371</width>
-            <height>204</height>
+            <height>211</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -260,21 +269,21 @@
              <item>
               <widget class="QComboBox" name="comboBox_gamemode">
                <property name="currentIndex">
-                <number>1</number>
+                <number>0</number>
                </property>
                <item>
                 <property name="text">
-                 <string>Endless</string>
+                 <string>endless</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Survival</string>
+                 <string>survival</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Wilderness</string>
+                 <string>wilderness</string>
                 </property>
                </item>
               </widget>
@@ -399,6 +408,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_browseDedicatedServerLocation">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>Browse</string>
              </property>
@@ -418,7 +430,7 @@
            <item>
             <widget class="QPushButton" name="pushButton_browseServerTokenLocation">
              <property name="enabled">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="text">
               <string>Browse</string>
@@ -497,6 +509,9 @@
    </property>
   </action>
   <action name="actionLoad_server_files">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Load server settings</string>
    </property>

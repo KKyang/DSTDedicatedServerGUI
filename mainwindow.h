@@ -13,18 +13,21 @@
 #define ini_cave  "settings_cave.ini"
 
 #include <QMainWindow>
+#include <QButtonGroup>
 #include <QDir>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QFileDialog>
-//#include <QFuture>
 #include <QProcess>
+#include <QScrollBar>
 #include <QSettings>
 #include <QStandardPaths>
 
 
 struct properties{
+    properties(){}
+    properties(QString g, QString n, QString s) : group(g), name(n), settings(s){}
     QString group;
     QString name;
     QString settings;
@@ -56,6 +59,8 @@ public:
 private slots:
     void writeWorldMesgOnScreen();
     void writeCaveMesgOnScreen();
+    void modeUpdated(int code,QProcess::ExitStatus status);
+
     void on_pushButton_startServer_clicked();
 
     void on_pushButton_stopServer_clicked();
@@ -67,6 +72,14 @@ private slots:
     void on_lineEdit_caveEdit_returnPressed();
 
 private:
+    Ui::MainWindow *ui;
+    //Main app ini settings
+    void readGUIINISettings();
+    void writeGUIINISettings();
+
+    std::vector<properties> _gui_ini;
+
+    //DST related
     bool checkServerExists(QString dstds_path, bool reload_template = true);
     bool firstServerSetup();
 
@@ -77,23 +90,22 @@ private:
     bool readLua(int world_num, QString file_path);
     bool writeLua(int world_num, QString file_path);
 
-    void disableWidgetsWhenStartServer(bool status);
-    void disableSetttingsWhenServerExists(bool status);
-
-    Ui::MainWindow *ui;
+    QProcess _update_mod;
     QProcess _dst_server;
     QProcess _dst_cave;
-    //QFuture<void> cave_future;
-    //QFutureWatcher<void> cave_watcher;
-    //QFuture<void> world_future;
-    //QFutureWatcher<void> world_watcher;
 
     bool _server_found = false;
+
     QString _dstds_exe;
     QString _dstds_folder;
     QString _server_token;
 
     std::vector<DSTSettings> world;
+
+    //UI
+    void disableWidgetsWhenStartServer(bool status);
+    void disableSetttingsWhenServerExists(bool status);
+    QButtonGroup *group;
 };
 
 #endif // MAINWINDOW_H

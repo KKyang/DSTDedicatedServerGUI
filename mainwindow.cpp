@@ -8,38 +8,110 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    readGUIINISettings();
+
     connect(&_dst_server, SIGNAL(readyRead()), this, SLOT(writeWorldMesgOnScreen()));
     connect(&_dst_cave, SIGNAL(readyRead()), this, SLOT(writeCaveMesgOnScreen()));
-    _server_token = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("/Klei/DoNotStarveTogether/") + QString(server_token);
-
-    QFileInfo checkTokenFile(_server_token);
-    if(!(checkTokenFile.exists() && checkTokenFile.isFile()))
-    {
-        QMessageBox::warning(this, "Warning", "Missing server token files!\nMake sure you have one somewhere else.");
-        _server_token.clear();
-    }
-    ui->lineEdit_serverTokenLocation->setText(_server_token);
-
+    connect(&_update_mod, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(modeUpdated(int,QProcess::ExitStatus)));
     world.resize(2);
-
     world[DST_WORLD].world_name = "world";
     world[DST_CAVE].world_name = "cave";
     ui->lineEdit_serverDataLocation->setText(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("/Klei"));
     _server_found = checkServerExists(ui->lineEdit_serverDataLocation->text());
+
+    group = new QButtonGroup(parent);
+    group->addButton(ui->pushButton_startServer);
+    group->addButton(ui->pushButton_stopServer);
+    group->setExclusive(true);
 }
 
 MainWindow::~MainWindow()
 {
+    if(_dst_server.state() == QProcess::Running)
+    {
+        _dst_server.write("c_shutdown()");
+        _dst_server.write("\n");
+        _dst_server.waitForFinished(10000);
+    }
+    _dst_server.close();
+
+    if(_dst_cave.state() == QProcess::Running)
+    {
+        _dst_cave.write("c_shutdown()");
+        _dst_cave.write("\n");
+        _dst_cave.waitForFinished(10000);
+    }
+    _dst_cave.close();
+    writeGUIINISettings();
+
     delete ui;
 }
 
+//GUI settings start
+void MainWindow::readGUIINISettings()
+{
+    QFileInfo checkfile("guisettings.ini");
+    if((checkfile.exists() && checkfile.isFile()))
+    {
+        QSettings settings("guisettings.ini", QSettings::IniFormat);
+        QStringList groups = settings.childGroups();
+        for(int i = 0; i < groups.size(); i++)
+        {
+            settings.beginGroup(groups[i]);
+            QStringList keys = settings.allKeys();
+            for(int j = 0; j < keys.size(); j++)
+            {
+                properties ini;
+                ini.group = groups[i];
+                ini.name = keys[j];
+                ini.settings = settings.value(keys[j]).toString();
+
+                if(!ini.name.compare("DST Server Root Directory")){ui->lineEdit_dedicatedServerLocation->setText(ini.settings);}
+                else if(!ini.name.compare("DST token location")){_server_token = ini.settings;}
+            }
+            settings.endGroup();
+        }
+    }
+
+    if(ui->lineEdit_serverTokenLocation->text().isEmpty())
+    {
+        _server_token = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("/Klei/DoNotStarveTogether/") + QString(server_token);
+
+        QFileInfo checkTokenFile(_server_token);
+        if(!(checkTokenFile.exists() && checkTokenFile.isFile()))
+        {
+            QMessageBox::warning(this, "Warning", "Missing server token files!\nMake sure you have one somewhere else.");
+            _server_token.clear();
+        }
+    }
+
+    ui->lineEdit_serverTokenLocation->setText(_server_token);
+}
+
+void MainWindow::writeGUIINISettings()
+{
+    _gui_ini.push_back(properties("Basic","DST Server Root Directory", ui->lineEdit_dedicatedServerLocation->text()));
+    _gui_ini.push_back(properties("Basic", "DST token location", ui->lineEdit_serverTokenLocation->text()));
+
+    QSettings settings("guisettings.ini", QSettings::IniFormat);
+    for(int i = 0; i < _gui_ini.size(); i++)
+    {
+        properties &ini = _gui_ini[i];
+        settings.setValue(ini.group + QString("/") + ini.name, ini.settings);
+    }
+}
+//GUI settings end
+
+//GUI signal and slots start
 void MainWindow::writeWorldMesgOnScreen()
 {
     QByteArray result = _dst_server.readAllStandardOutput();
 #ifdef _DEBUG
         qDebug() << result.data();
 #endif
-    ui->textBrowser_world->append(QString(result));
+    ui->textBrowser_world->insertPlainText(QString(result));
+    ui->textBrowser_world->verticalScrollBar()->setValue(ui->textBrowser_world->verticalScrollBar()->maximum());
 }
 
 void MainWindow::writeCaveMesgOnScreen()
@@ -48,8 +120,25 @@ void MainWindow::writeCaveMesgOnScreen()
 #ifdef _DEBUG
         qDebug() << result.data();
 #endif
-    ui->textBrowser_cave->append(QString(result));
+    ui->textBrowser_cave->insertPlainText(QString(result));
+    ui->textBrowser_cave->verticalScrollBar()->setValue(ui->textBrowser_cave->verticalScrollBar()->maximum());
 }
+
+void MainWindow::modeUpdated(int code,QProcess::ExitStatus status)
+{
+    ui->statusBar->showMessage("Update finished. Starting dedicated servers.");
+    //Start both servers
+    QStringList startup_cmd;
+    startup_cmd << "-conf_dir" << QString(folder_world) << QString(" -console") << QString("-skip_update_server_mods");
+    _dst_server.setWorkingDirectory(ui->lineEdit_dedicatedServerLocation->text() + QString("/bin"));
+    _dst_server.start(_dstds_exe, startup_cmd);
+
+    startup_cmd.clear();
+    startup_cmd << "-conf_dir" << QString(folder_cave) << QString("-console") << QString("-skip_update_server_mods");
+    _dst_cave.setWorkingDirectory(ui->lineEdit_dedicatedServerLocation->text() + QString("/bin"));
+    _dst_cave.start(_dstds_exe, startup_cmd);
+}
+//GUI signal and slots end
 
 bool MainWindow::checkServerExists(QString dstds_path, bool reload_template)
 {
@@ -103,12 +192,13 @@ bool MainWindow::firstServerSetup()
     _dstds_folder = ui->lineEdit_serverDataLocation->text() + QString("/") + QString(folder_world);
     if(!checkFolder.exists(_dstds_folder))
     {
-        if(QMessageBox::warning(this, "GUI server folder not found.", "Folder not found, shall I create one?", QMessageBox::Yes|QMessageBox::No)
+        if(QMessageBox::warning(this, "GUI server folder not found.", "World folder not found, shall I create one?", QMessageBox::Yes|QMessageBox::No)
                 == QMessageBox::No)
         {
             return false;
         }
         checkFolder.mkpath(_dstds_folder);
+        QFile::copy(ui->lineEdit_serverTokenLocation->text(), QString(_dstds_folder + QString("/") + QString(server_token)));
         writeLua(DST_WORLD, _dstds_folder + QString("/") + QString(override_lua));
         changeSettings(DST_WORLD, "default_server_name", ui->lineEdit_servername->text());
         changeSettings(DST_WORLD, "default_server_description", ui->lineEdit_serverDescription->text());
@@ -127,25 +217,28 @@ bool MainWindow::firstServerSetup()
     _dstds_folder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("/Klei/") + QString(folder_cave);
     if(!checkFolder.exists(_dstds_folder))
     {
-        if(QMessageBox::warning(this, "GUI cave folder not found.", "Folder not found, shall I create one?", QMessageBox::Yes|QMessageBox::No)
+        if(QMessageBox::warning(this, "GUI cave folder not found.", "Cave folder not found, shall I create one?", QMessageBox::Yes|QMessageBox::No)
                 == QMessageBox::No)
         {
             return false;
         }
 
         checkFolder.mkpath(_dstds_folder);
+        QFile::copy(ui->lineEdit_serverTokenLocation->text(), _dstds_folder + QString("/") + QString(server_token));
         writeLua(DST_CAVE, _dstds_folder + QString("/") + QString(override_lua));
         changeSettings(DST_CAVE, "default_server_name", ui->lineEdit_servername->text());
         changeSettings(DST_CAVE, "default_server_description", ui->lineEdit_serverDescription->text());
         changeSettings(DST_CAVE, "max_players", ui->spinBox_serverMaxPlayers->text());
         ui->radioButton_pvpYes->isChecked() ? changeSettings(DST_CAVE, "pvp", "true") :
                                               changeSettings(DST_CAVE, "pvp", "false");
-        //changeSettings(DST_CAVE, "server_password", ui->lineEdit_serverPassword->text());
+        changeSettings(DST_CAVE, "server_password", ui->lineEdit_serverPassword->text());
         changeSettings(DST_CAVE, "server_save_slot", ui->comboBox_serverSaveSlot->currentText());
         changeSettings(DST_CAVE, "server_intention", ui->comboBox_serverIntention->currentText());
-        changeSettings(DST_CAVE, "game_mode", ui->comboBox_gamemode->currentText());
+        changeSettings(DST_CAVE, "game_mode", ui->comboBox_gamemode->currentText().toLower());
         writeINI(DST_CAVE,_dstds_folder + QString("/") + QString(settings_ini));
     }
+    _server_found = true;
+    return true;
 }
 
 void MainWindow::changeSettings(int world_num, QString name, QString value)
@@ -272,7 +365,23 @@ bool MainWindow::writeLua(int world_num, QString file_path)
 
 void MainWindow::disableWidgetsWhenStartServer(bool status)
 {
+    ui->lineEdit_dedicatedServerLocation->setEnabled(!status);
+    ui->lineEdit_serverTokenLocation->setEnabled(!status);
+    ui->lineEdit_servername->setEnabled(!status);
+    ui->lineEdit_serverDataLocation->setEnabled(!status);
+    ui->lineEdit_serverDescription->setEnabled(!status);
+    ui->spinBox_serverMaxPlayers->setEnabled(!status);
+    ui->radioButton_pvpYes->setEnabled(!status);
+    ui->radioButton_pvpNo->setEnabled(!status);
+    ui->lineEdit_serverPassword->setEnabled(!status);
+    ui->comboBox_serverSaveSlot->setEnabled(!status);
+    ui->comboBox_serverIntention->setEnabled(!status);
+    ui->comboBox_gamemode->setEnabled(!status);
 
+    if(_server_found)
+    {
+        disableSetttingsWhenServerExists(true);
+    }
 }
 
 void MainWindow::disableSetttingsWhenServerExists(bool status)
@@ -283,32 +392,45 @@ void MainWindow::disableSetttingsWhenServerExists(bool status)
 
 void MainWindow::on_pushButton_startServer_clicked()
 {
+    disableWidgetsWhenStartServer(true);
     //Check token file exists.
+    ui->statusBar->showMessage("Check if token file exists.");
     QFileInfo checkfile(ui->lineEdit_serverTokenLocation->text());
-    if(!(checkfile.exists() && checkfile.isFile()))
+    if(!(checkfile.exists() && checkfile.isFile()) && !_server_found)
     {
         QMessageBox::critical(this, "Error", "No token found!");
+        ui->statusBar->showMessage("No server token. Aborting.");
+        disableWidgetsWhenStartServer(false);
         return;
     }
 
     //Check if dst exe exists.
+    ui->statusBar->showMessage("Check if don't starve together dedicated server exists.");
     _dstds_exe = ui->lineEdit_dedicatedServerLocation->text() + "/bin/dontstarve_dedicated_server_nullrenderer.exe";
     checkfile.setFile(_dstds_exe);
     if(!(checkfile.exists() && checkfile.isFile()))
     {
         QMessageBox::critical(this, "Error", "Don't Starve Together Dedicated Server not found!");
+        ui->statusBar->showMessage("No dedicated server executable detected. Aborting.");
+        disableWidgetsWhenStartServer(false);
         return;
     }
 
-    _dstds_folder = ui->lineEdit_serverDataLocation->text();
+
 
     //Check again if the folder changed.
+    ui->statusBar->showMessage("Check if there is an existing server.");
     _server_found = checkServerExists(_dstds_folder, false);
 
     if(!_server_found)
-        firstServerSetup();
-
-
+    {
+        ui->statusBar->showMessage("Creating new server.");
+        if(!firstServerSetup())
+        {
+            ui->statusBar->showMessage("Something went wrong shen creating a new server.");
+            disableWidgetsWhenStartServer(false);
+        }
+    }
 
     /*
      * cd C:\Program Files (x86)\Steam\SteamApps\common\Don't Starve Together Dedicated Server\bin
@@ -317,22 +439,13 @@ void MainWindow::on_pushButton_startServer_clicked()
      * cd C:\Program Files (x86)\Steam\SteamApps\common\Don't Starve Together Dedicated Server\bin
      * dontstarve_dedicated_server_nullrenderer -conf_dir DST_Cave -console
      * */
-      //QString startup_cmd;
-      //    _dst_server.start("cmd");
-      //    _dst_cave.start("cmd");
-//    if(_dstds_exe[0].toUpper() != QChar("C"))
-//    {
-//        startup_cmd = _dstds_exe[0].toUpper() + QString(": ");
-//    }
-//    startup_cmd = startup_cmd + QString("D: cd ") + _dstds_exe + QString(" -conf_dir ") + QString(folder_world) + QString(" -console\n");
-//    _dst_server.write(startup_cmd);
-//    startup_cmd = startup_cmd + QString("D: cd ") + _dstds_exe + QString(" -conf_dir ") + QString(folder_cave) + QString(" -console\n");
-//    _dst_cave.write(startup_cmd);
+
     QStringList startup_cmd;
-    startup_cmd << "-conf_dir" << QString(folder_world) << QString(" -console");
-    _dst_server.start(_dstds_exe, startup_cmd);
-    startup_cmd << "-conf_dir" << QString(folder_cave) << QString(" -console");
-    _dst_cave.start(_dstds_exe, startup_cmd);
+    //Update server mod
+    startup_cmd << "-only_update_server_mods";
+    ui->statusBar->showMessage("Updating server mods.");
+    _update_mod.setWorkingDirectory(ui->lineEdit_dedicatedServerLocation->text() + QString("/bin"));
+    _update_mod.start(_dstds_exe, startup_cmd);
 }
 
 void MainWindow::on_pushButton_stopServer_clicked()
@@ -347,6 +460,7 @@ void MainWindow::on_pushButton_stopServer_clicked()
         _dst_cave.write("c_shutdown()");
         _dst_cave.write("\n");
     }
+    disableWidgetsWhenStartServer(false);
 }
 
 void MainWindow::on_pushButton_restartServer_clicked()
@@ -356,20 +470,38 @@ void MainWindow::on_pushButton_restartServer_clicked()
 
 void MainWindow::on_lineEdit_worldEdit_returnPressed()
 {
+    if(!ui->lineEdit_worldEdit->text().compare("c_shutdown()"))
+    {
+        ui->statusBar->showMessage("Please use stop server button or use restart command instead.");
+        return;
+    }
     if(_dst_server.state() == QProcess::Running)
     {
         _dst_server.write(ui->lineEdit_worldEdit->text().toStdString().c_str());
         _dst_server.write("\n");
         ui->lineEdit_worldEdit->clear();
     }
+    else if(!ui->lineEdit_worldEdit->text().compare("gui_startServer"))
+    {
+        //Still working on it.
+    }
 }
 
 void MainWindow::on_lineEdit_caveEdit_returnPressed()
 {
+    if(!ui->lineEdit_caveEdit->text().compare("c_shutdown()"))
+    {
+        ui->statusBar->showMessage("Please use stop server button or use restart command instead.");
+        return;
+    }
     if(_dst_server.state() == QProcess::Running)
     {
         _dst_cave.write(ui->lineEdit_caveEdit->text().toStdString().c_str());
         _dst_cave.write("\n");
         ui->lineEdit_caveEdit->clear();
+    }
+    else if(!ui->lineEdit_caveEdit->text().compare("gui_startServer"))
+    {
+        //Still working on it.
     }
 }
