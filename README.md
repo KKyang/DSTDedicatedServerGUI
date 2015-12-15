@@ -19,6 +19,10 @@ Windows
 
 2. Currently adding mods when creating new server is not supported. Will be added soon.
 
+3. The app automatically search the token file in the default path. You can also assign the path manually.
+
+4. You'll have to tell the app where the dedicated server's root directory location is.
+
 ## Future work
 
 1. Able to change worldgenoverride.lua in GUI when creating a new server.
