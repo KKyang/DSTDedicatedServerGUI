@@ -59,6 +59,22 @@ private slots:
 
     void on_lineEdit_caveEdit_returnPressed();
 
+    void on_lineEdit_servername_editingFinished();
+
+    void on_lineEdit_serverDescription_editingFinished();
+
+    void on_lineEdit_serverPassword_editingFinished();
+
+    void on_spinBox_serverMaxPlayers_editingFinished();
+
+    void on_radioButton_pvpYes_toggled(bool checked);
+
+    void on_comboBox_gamemode_currentIndexChanged(const QString &arg1);
+
+    void on_comboBox_serverSaveSlot_currentIndexChanged(const QString &arg1);
+
+    void on_comboBox_serverIntention_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     //Main app ini settings

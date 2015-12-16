@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -145,7 +145,7 @@
             <x>10</x>
             <y>21</y>
             <width>371</width>
-            <height>224</height>
+            <height>250</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -153,6 +153,27 @@
             <widget class="QLabel" name="label_7">
              <property name="text">
               <string>PVP</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Server description</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEdit_serverPassword">
+             <property name="text">
+              <string>12345</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="lineEdit_serverDescription">
+             <property name="text">
+              <string>Yeah!</string>
              </property>
             </widget>
            </item>
@@ -169,13 +190,6 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="lineEdit_serverPassword">
-             <property name="text">
-              <string>12345</string>
-             </property>
-            </widget>
-           </item>
            <item row="3" column="0">
             <widget class="QLabel" name="label_6">
              <property name="text">
@@ -183,17 +197,10 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_4">
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEdit_servername">
              <property name="text">
-              <string>Server description</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="lineEdit_serverDescription">
-             <property name="text">
-              <string>Yeah!</string>
+              <string>A DST Cave Server</string>
              </property>
             </widget>
            </item>
@@ -201,20 +208,6 @@
             <widget class="QLabel" name="label_5">
              <property name="text">
               <string>Server password</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Server name</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEdit_servername">
-             <property name="text">
-              <string>A DST Cave Server</string>
              </property>
             </widget>
            </item>
@@ -239,6 +232,13 @@
              </item>
             </layout>
            </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Server name</string>
+             </property>
+            </widget>
+           </item>
            <item row="5" column="0">
             <widget class="QLabel" name="label_8">
              <property name="text">
@@ -249,7 +249,7 @@
            <item row="5" column="1">
             <widget class="QComboBox" name="comboBox_gamemode">
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <item>
               <property name="text">
@@ -314,13 +314,11 @@
              </property>
             </widget>
            </item>
-           <item row="7" column="1">
-            <widget class="QComboBox" name="comboBox_serverIntention">
-             <item>
-              <property name="text">
-               <string>cooperative</string>
-              </property>
-             </item>
+           <item row="8" column="1">
+            <widget class="QCheckBox" name="checkBox_useModBool">
+             <property name="text">
+              <string/>
+             </property>
             </widget>
            </item>
            <item row="8" column="0">
@@ -330,11 +328,28 @@
              </property>
             </widget>
            </item>
-           <item row="8" column="1">
-            <widget class="QCheckBox" name="checkBox_useModBool">
-             <property name="text">
-              <string/>
-             </property>
+           <item row="7" column="1">
+            <widget class="QComboBox" name="comboBox_serverIntention">
+             <item>
+              <property name="text">
+               <string>social</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>cooperative</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>competitive</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>madness</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>

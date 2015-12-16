@@ -4,7 +4,7 @@ return {
        unprepared = { -- "never", "rare", "default", "often", "always"
                berrybush = "default",
                cactus = "default",
-               carrot = "often",
+               carrot = "default",
                mushroom = "default",
        },
        misc = {
@@ -24,7 +24,7 @@ return {
                weather = "default", -- "never", "rare", "default", "often", "always"
                wildfires = "default", -- "never", "rare", "default", "often", "always"
                winter = "default", -- "noseason", "veryshortseason", "shortseason", "default", "longseason", "verylongseason", "random"
-               world_size = "large", -- "default", "medium", "large", "huge"
+               world_size = "default", -- "default", "medium", "large", "huge"
        },
        animals = { -- "never", "rare", "default", "often", "always"
                alternatehunt = "default",
@@ -64,13 +64,13 @@ return {
                walrus = "default",
        },
        resources = { -- "never", "rare", "default", "often", "always"
-               flint = "often",
+               flint = "default",
                flowers = "default",
                grass = "default",
                marshbush = "default",
                meteorshowers = "default",
                meteorspawner = "default",
-               reeds = "often",
+               reeds = "default",
                rock = "default",
                rock_ice = "default",
                sapling = "default",
