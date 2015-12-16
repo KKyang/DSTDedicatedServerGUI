@@ -3,6 +3,8 @@ A Don't Starve Together Dedicated Server GUI.
 
 **Still in heavy development. Backup your server before using it!**
 
+![imgur](http://i.imgur.com/QkBdMd3.png)
+
 ## Minimum Requirements
 
 1. A PC running Windows
@@ -45,8 +47,12 @@ You may need the Visual Studio 2013 Redistributable if lack of vc related DLL: h
 6. Setup the root directory of the dedicated server. (Where you can see folders like bin, mods...)
 7. Check if the path of the server_token.txt is assigned.
 8. Configure your new server.
+  ![Imgur](http://i.imgur.com/QkBdMd3.png)
 9. Go to Console tab.
 10. Press start server.
+  ![Imgur](http://i.imgur.com/oXH7T2y.png)
+11. Enjoy!
+  ![Imgur](http://i.imgur.com/CASjY5R.png)
 
 ### Use an existing server
 
@@ -62,6 +68,10 @@ You may need the Visual Studio 2013 Redistributable if lack of vc related DLL: h
 8. Check if the path of the server_token.txt is assigned.
 9. Go to Console tab.
 10. Press start server.
+  ![Imgur](http://i.imgur.com/oXH7T2y.png)
+11. Enjoy!
+  ![Imgur](http://i.imgur.com/CASjY5R.png)
+
 
 ## Q & A
 
