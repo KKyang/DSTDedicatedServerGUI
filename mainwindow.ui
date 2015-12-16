@@ -139,27 +139,47 @@
          <property name="title">
           <string>Basic Settings</string>
          </property>
-         <widget class="QWidget" name="">
+         <widget class="QWidget" name="layoutWidget">
           <property name="geometry">
            <rect>
             <x>10</x>
             <y>21</y>
             <width>371</width>
-            <height>211</height>
+            <height>224</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_3">
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_7">
              <property name="text">
-              <string>Server name</string>
+              <string>PVP</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEdit_servername">
+           <item row="3" column="1">
+            <widget class="QSpinBox" name="spinBox_serverMaxPlayers">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>64</number>
+             </property>
+             <property name="value">
+              <number>10</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEdit_serverPassword">
              <property name="text">
-              <string>A DST Cave Server</string>
+              <string>12345</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>Max players</string>
              </property>
             </widget>
            </item>
@@ -184,37 +204,17 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="lineEdit_serverPassword">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_3">
              <property name="text">
-              <string>12345</string>
+              <string>Server name</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_6">
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEdit_servername">
              <property name="text">
-              <string>Max players</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QSpinBox" name="spinBox_serverMaxPlayers">
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>64</number>
-             </property>
-             <property name="value">
-              <number>10</number>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_7">
-             <property name="text">
-              <string>PVP</string>
+              <string>A DST Cave Server</string>
              </property>
             </widget>
            </item>
@@ -323,6 +323,20 @@
              </item>
             </widget>
            </item>
+           <item row="8" column="0">
+            <widget class="QLabel" name="label_10">
+             <property name="text">
+              <string>Use mods</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QCheckBox" name="checkBox_useModBool">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </widget>
@@ -372,8 +386,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>371</width>
-             <height>349</height>
+             <width>98</width>
+             <height>28</height>
             </rect>
            </property>
            <attribute name="label">
@@ -381,13 +395,11 @@
            </attribute>
           </widget>
          </widget>
-         <zorder>groupBox</zorder>
-         <zorder>toolBox</zorder>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -475,8 +487,7 @@
       </layout>
      </widget>
      <zorder>layoutWidget</zorder>
-     <zorder></zorder>
-     <zorder></zorder>
+     <zorder>layoutWidget</zorder>
     </widget>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">

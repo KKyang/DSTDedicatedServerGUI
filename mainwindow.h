@@ -3,6 +3,8 @@
 
 #define server_token "server_token.txt"
 #define override_lua "worldgenoverride.lua"
+#define mod_override_lua "modoverrides.lua"
+
 #define settings_ini "settings.ini"
 #define folder_world "gui_dst_server"
 #define folder_cave  "gui_dst_cave"

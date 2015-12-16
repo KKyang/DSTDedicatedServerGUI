@@ -163,6 +163,17 @@ bool MainWindow::checkServerExists(QString dstds_path, bool reload_template)
             writeLuaToGUI(DST_WORLD);
             return false;
         }
+        QFileInfo override_world(dstds_path+ QString("/") + QString(folder_world) + QString("/") + QString(mod_override_lua)),
+                  override_cave(dstds_path+ QString("/") + QString(folder_cave) + QString("/") + QString(mod_override_lua));
+        if(!(override_world.exists() && override_world.isFile()) && (override_cave.exists() && override_cave.isFile()))
+        {
+            ui->statusBar->showMessage("No modoverrrides.lua found. Pretend you're not using any mods.");
+            ui->checkBox_useModBool->setChecked(false);
+        }
+        else
+        {
+            ui->checkBox_useModBool->setChecked(true);
+        }
 
 
         disableSetttingsWhenServerExists(true);
@@ -284,7 +295,6 @@ bool MainWindow::firstServerSetup()
         changeSettings(DST_WORLD, "server_save_slot", ui->comboBox_serverSaveSlot->currentText());
         changeSettings(DST_WORLD, "server_intention", ui->comboBox_serverIntention->currentText());
         changeSettings(DST_WORLD, "game_mode", ui->comboBox_gamemode->currentText());
-
         writeINI(DST_WORLD,_dstds_folder + QString("/") + QString(settings_ini));
 
     }
@@ -311,7 +321,40 @@ bool MainWindow::firstServerSetup()
         changeSettings(DST_CAVE, "server_intention", ui->comboBox_serverIntention->currentText());
         changeSettings(DST_CAVE, "game_mode", ui->comboBox_gamemode->currentText().toLower());
         writeINI(DST_CAVE,_dstds_folder + QString("/") + QString(settings_ini));
+
+
     }
+
+    if(ui->checkBox_useModBool->isChecked())
+    {
+        _dstds_folder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("/Klei/") + QString(folder_world);
+        QFileInfo checkfile(_dstds_folder + QString("/") + QString(mod_override_lua));
+        if(!(checkfile.exists() && checkfile.isFile()))
+        {
+            if(!QFile::copy("template/modoverrides.lua",_dstds_folder + QString("/") + QString(mod_override_lua)))
+            {
+                if(QMessageBox::warning(this, "modoverrides.lua Missing", "Looks like you want to enable mods. But the lua file is missing.\nUsing force enable mod is not recommended.\nContinue?", QMessageBox::Yes|QMessageBox::No)
+                        == QMessageBox::No)
+                {
+                    return false;
+                }
+            }
+        }
+        _dstds_folder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("/Klei/") + QString(folder_cave);
+        checkfile.setFile(_dstds_folder + QString("/") + QString(mod_override_lua));
+        if(!(checkfile.exists() && checkfile.isFile()))
+        {
+            if(!QFile::copy("template/modoverrides.lua",_dstds_folder + QString("/") + QString(mod_override_lua)))
+            {
+                if(QMessageBox::warning(this, "modoverrides.lua Missing", "Looks like you want to enable mods. But the lua file is missing.\nUsing force enable mod is not recommended.\nContinue?", QMessageBox::Yes|QMessageBox::No)
+                        == QMessageBox::No)
+                {
+                    return false;
+                }
+            }
+        }
+    }
+
     _server_found = true;
     return true;
 }
@@ -447,6 +490,7 @@ void MainWindow::on_pushButton_startServer_clicked()
         {
             ui->statusBar->showMessage("Something went wrong shen creating a new server.");
             disableWidgetsWhenStartServer(false);
+            return;
         }
     }
 
