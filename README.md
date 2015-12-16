@@ -20,7 +20,7 @@ A Don't Starve Together Dedicated Server GUI.
 
 You may need the Visual Studio 2013 Redistributable if lack of vc related DLL: https://www.microsoft.com/zh-TW/download/details.aspx?id=40784
 
-**This GUi depends on the templates stored in the template folder, don't modify them (except modoverrides.lua) easily.**
+**This GUI depends on the templates stored in the template folder, don't modify them (except modoverrides.lua) easily.**
 
 ### Pre-built binaries
 
