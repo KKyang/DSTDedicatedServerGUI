@@ -47,7 +47,7 @@ You may need the Visual Studio 2013 Redistributable if lack of vc related DLL: h
 6. Setup the root directory of the dedicated server. (Where you can see folders like bin, mods...)
 7. Check if the path of the server_token.txt is assigned.
 8. Configure your new server.
-  ![Imgur](http://i.imgur.com/QkBdMd3.png)
+  ![Imgur](http://i.imgur.com/KQ8ek5s.png)
 9. Go to Console tab.
 10. Press start server.
   ![Imgur](http://i.imgur.com/oXH7T2y.png)
@@ -78,6 +78,10 @@ You may need the Visual Studio 2013 Redistributable if lack of vc related DLL: h
 Q: Does this GUI supports adding mods?
 
 A: Currently adding mods when creating new server is supported, but you'll have to manually edit the modoverrides.lua and put it into the template folder. The app supports updating mods, but you'll have to modify the dedicated_server_mods_setup.lua located at your dedicated server mods directory.
+
+Q: What's the language of the GUI?
+
+A: Currently it supports Traditional Chinese and English. I use Qt's Locale to detect the system automatically.
 
 ## Future work
 
