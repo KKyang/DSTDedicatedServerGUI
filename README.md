@@ -3,9 +3,10 @@ A Don't Starve Together Dedicated Server GUI.
 
 **Still in heavy development. Backup your server before using it!**
 
-## Working OS
+## Minimum Requirements
 
-Windows
+1. A PC running Windows
+2. A dedicated server with cave or after.
 
 ## What can it do
 
