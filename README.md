@@ -35,6 +35,8 @@ You may need the Visual Studio 2013 Redistributable if lack of vc related DLL: h
 
 ### Starting a new server
 
+**Still in heavy development. Backup your server before using it!**
+
 1. Install Don't Starve Together dedicated server. (Downloading by Steam client is recommended.)
 2. Make sure the template folder is in the same directory as the executable.
 3. Open don't starve together and type "~" to open a console. After that, type ``TheNet:GenerateServerToken()``. The server_token.txt will be generate. (You can also assign the path manually if you already have one somewhere else.)
@@ -47,6 +49,8 @@ You may need the Visual Studio 2013 Redistributable if lack of vc related DLL: h
 10. Press start server.
 
 ### Use an existing server
+
+**Still in heavy development. Backup your server before using it!**
 
 1. Install Don't Starve Together dedicated server. (Downloading by Steam client is recommended.)
 2. Make sure the template folder is in the same directory as the executable.
