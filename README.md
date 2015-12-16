@@ -49,7 +49,7 @@ You may need the Visual Studio 2013 Redistributable if lack of vc related DLL: h
 8. Configure your new server.
   ![Imgur](http://i.imgur.com/KQ8ek5s.png)
 9. Go to Console tab.
-10. Press start server.
+10. Press start server (啟動伺服器).
   ![Imgur](http://i.imgur.com/oXH7T2y.png)
 11. Enjoy!
   ![Imgur](http://i.imgur.com/CASjY5R.png)
@@ -67,7 +67,7 @@ You may need the Visual Studio 2013 Redistributable if lack of vc related DLL: h
 7. Setup the root directory of the dedicated server. (Where you can see folders like bin, mods...)
 8. Check if the path of the server_token.txt is assigned.
 9. Go to Console tab.
-10. Press start server.
+10. Press start server (啟動伺服器).
   ![Imgur](http://i.imgur.com/oXH7T2y.png)
 11. Enjoy!
   ![Imgur](http://i.imgur.com/CASjY5R.png)
