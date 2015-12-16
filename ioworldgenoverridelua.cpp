@@ -55,7 +55,13 @@ bool IOWorldGenOverrideLua::readLuaFile(std::vector<properties> &PV, std::vector
                                     if(inGroup1.indexOf(QString("-- ")) > 0)
                                     {
                                         inGroup1 = inGroup1.split("-- ")[inGroup1.split("-- ").size() - 1];
+#ifdef QT_DEBUG
+                                        qDebug() << inGroup1;
+#endif
                                         inGroup1 = inGroup1.split(":")[inGroup1.split(":").size() - 1];
+#ifdef QT_DEBUG
+                                        qDebug() << inGroup1;
+#endif
                                         inGroupData = inGroup1.split(",");
                                         for(int i = 0; i < inGroupData.size(); i++)
                                         {

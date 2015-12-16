@@ -226,11 +226,11 @@ void MainWindow::writeINIToGUI(int world_num)
         }
         else if(!name.compare("game_mode"))
         {
-            if(!name.compare("Endless"))
+            if(!name.compare("endless"))
                 ui->comboBox_gamemode->setCurrentIndex(0);
-            else if(!name.compare("Survival"))
+            else if(!name.compare("survival"))
                 ui->comboBox_gamemode->setCurrentIndex(1);
-            else if(!name.compare("Wilderness"))
+            else if(!name.compare("wilderness"))
                 ui->comboBox_gamemode->setCurrentIndex(2);
         }
         else if(!name.compare("pvp"))
@@ -447,7 +447,7 @@ void MainWindow::changeINISettings(int world_num, QString name)
     else if(!name.compare("game_mode"))
     {
         std::vector<QString> type = {"endless","survival", "wilderness"};
-        value = type[ui->comboBox_serverIntention->currentIndex()];
+        value = type[ui->comboBox_gamemode->currentIndex()];
     }
     for(int i = 0; i < world[world_num].ini.size(); i++)
     {

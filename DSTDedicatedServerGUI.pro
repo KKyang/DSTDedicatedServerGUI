@@ -22,4 +22,4 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-TRANSLATIONS += translate/dstdsgui_zh_HK.ts
+TRANSLATIONS += translations/dstdsgui_zh_HK.ts
