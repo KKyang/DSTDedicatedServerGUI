@@ -21,3 +21,5 @@ HEADERS  += mainwindow.h \
     dstdatastructure.h
 
 FORMS    += mainwindow.ui
+
+TRANSLATIONS += translate/dstdsgui_zh_HK.ts

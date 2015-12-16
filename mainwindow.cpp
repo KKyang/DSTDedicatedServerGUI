@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QDir checkFolder;
     if(!checkFolder.exists("template"))
     {
-        QMessageBox::critical(this, "Error", "Missing template files! Exiting.");
+        QMessageBox::critical(this, QTranslator::tr("Error"), QTranslator::tr("Missing template files! Exiting."));
         exit(1);
     }
     readGUIINISettings();
@@ -88,7 +88,7 @@ void MainWindow::readGUIINISettings()
         QFileInfo checkTokenFile(_server_token);
         if(!(checkTokenFile.exists() && checkTokenFile.isFile()))
         {
-            QMessageBox::warning(this, "Warning", "Missing server token files!\nMake sure you have one somewhere else.");
+            QMessageBox::warning(this, QTranslator::tr("Warning"), QTranslator::tr("Missing server token files!\nMake sure you have one somewhere else."));
             _server_token.clear();
         }
     }
@@ -131,9 +131,9 @@ void MainWindow::writeCaveMesgOnScreen()
     ui->textBrowser_cave->verticalScrollBar()->setValue(ui->textBrowser_cave->verticalScrollBar()->maximum());
 }
 
-void MainWindow::modeUpdated(int code,QProcess::ExitStatus status)
+void MainWindow::modeUpdated(int code, QProcess::ExitStatus status)
 {
-    ui->statusBar->showMessage("Update finished. Starting dedicated servers.");
+    ui->statusBar->showMessage(QTranslator::tr("Update finished. Starting dedicated servers."));
     //Start both servers
     QStringList startup_cmd;
     startup_cmd << "-conf_dir" << QString(folder_world) << QString(" -console") << QString("-skip_update_server_mods");
@@ -154,20 +154,20 @@ bool MainWindow::checkServerExists(QString dstds_path, bool reload_template)
     {
         if(!readINI(DST_WORLD, dstds_path + QString("/") + QString(folder_world) + QString("/") + QString(settings_ini)))
         {
-            QMessageBox::critical(this, "Error", "Cannot found ini files in world folder!");
+            QMessageBox::critical(this, QTranslator::tr("Error"), QTranslator::tr("Cannot found ini files in world folder!"));
             return false;
         }
         writeINIToGUI(DST_WORLD);
 
         if(!readINI(DST_CAVE, dstds_path + QString("/") + QString(folder_cave) + QString("/") + QString(settings_ini)))
         {
-            QMessageBox::critical(this, "Error", "Cannot found ini files in cave folder!");
+            QMessageBox::critical(this, QTranslator::tr("Error"), QTranslator::tr("Cannot found ini files in cave folder!"));
             return false;
         }
 
         if(!readLua(DST_WORLD, dstds_path + QString("/") + QString(folder_world) + QString("/") + QString(override_lua)))
         {
-            QMessageBox::critical(this, "Error", "Cannot found lua files in world folder!");
+            QMessageBox::critical(this, QTranslator::tr("Error"), QTranslator::tr("Cannot found lua files in world folder!"));
             return false;
         }
         writeLuaToGUI(DST_WORLD);
@@ -180,7 +180,7 @@ bool MainWindow::checkServerExists(QString dstds_path, bool reload_template)
         }
         else
         {
-            ui->statusBar->showMessage("No modoverrrides.lua found. Pretending you're not using any mods.");
+            ui->statusBar->showMessage(QTranslator::tr("No modoverrrides.lua found. Pretending you're not using any mods."));
             ui->checkBox_useModBool->setChecked(false);
         }
 
@@ -299,7 +299,7 @@ bool MainWindow::firstServerSetup()
     QDir checkFolder;
     if(!checkFolder.exists(_dstds_folder))
     {
-        if(QMessageBox::warning(this, "Klei folder not found.", "Folder not found, shall I create one?", QMessageBox::Yes|QMessageBox::No)
+        if(QMessageBox::warning(this, QTranslator::tr("Klei folder not found."), QTranslator::tr("Folder not found, shall I create one?"), QMessageBox::Yes|QMessageBox::No)
                 == QMessageBox::Yes)
         {
             checkFolder.mkpath(_dstds_folder);
@@ -317,7 +317,7 @@ bool MainWindow::firstServerSetup()
     _dstds_folder = ui->lineEdit_serverDataLocation->text() + QString("/") + QString(folder_world);
     if(!checkFolder.exists(_dstds_folder))
     {
-        if(QMessageBox::warning(this, "GUI server folder not found.", "World folder not found, shall I create one?", QMessageBox::Yes|QMessageBox::No)
+        if(QMessageBox::warning(this, QTranslator::tr("GUI server folder not found."), QTranslator::tr("World folder not found, shall I create one?"), QMessageBox::Yes|QMessageBox::No)
                 == QMessageBox::No)
         {
             return false;
@@ -337,15 +337,14 @@ bool MainWindow::firstServerSetup()
     checkfile.setFile(_dstds_folder + QString("/") + QString(settings_ini));
     if(!(checkfile.exists() && checkfile.isFile()))
     {
-        changeSettings(DST_WORLD, "default_server_name", ui->lineEdit_servername->text());
-        changeSettings(DST_WORLD, "default_server_description", ui->lineEdit_serverDescription->text());
-        changeSettings(DST_WORLD, "max_players", ui->spinBox_serverMaxPlayers->text());
-        ui->radioButton_pvpYes->isChecked() ? changeSettings(DST_WORLD, "pvp", "true") :
-                                              changeSettings(DST_WORLD, "pvp", "false");
-        changeSettings(DST_WORLD, "server_password", ui->lineEdit_serverPassword->text());
-        changeSettings(DST_WORLD, "server_save_slot", ui->comboBox_serverSaveSlot->currentText());
-        changeSettings(DST_WORLD, "server_intention", ui->comboBox_serverIntention->currentText());
-        changeSettings(DST_WORLD, "game_mode", ui->comboBox_gamemode->currentText().toLower());
+        changeINISettings(DST_WORLD, "default_server_name");
+        changeINISettings(DST_WORLD, "default_server_description");
+        changeINISettings(DST_WORLD, "max_players");
+        changeINISettings(DST_WORLD, "pvp");
+        changeINISettings(DST_WORLD, "server_password");
+        changeINISettings(DST_WORLD, "server_save_slot");
+        changeINISettings(DST_WORLD, "server_intention");
+        changeINISettings(DST_WORLD, "game_mode");
         writeINI(DST_WORLD, _dstds_folder + QString("/") + QString(settings_ini));
     }
 
@@ -353,7 +352,7 @@ bool MainWindow::firstServerSetup()
     _dstds_folder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("/Klei/") + QString(folder_cave);
     if(!checkFolder.exists(_dstds_folder))
     {
-        if(QMessageBox::warning(this, "GUI cave folder not found.", "Cave folder not found, shall I create one?", QMessageBox::Yes|QMessageBox::No)
+        if(QMessageBox::warning(this, QTranslator::tr("GUI cave folder not found."), QTranslator::tr("Cave folder not found, shall I create one?"), QMessageBox::Yes|QMessageBox::No)
                 == QMessageBox::No)
         {
             return false;
@@ -374,15 +373,14 @@ bool MainWindow::firstServerSetup()
     checkfile.setFile(_dstds_folder + QString("/") + QString(settings_ini));
     if(!(checkfile.exists() && checkfile.isFile()))
     {
-        changeSettings(DST_CAVE, "default_server_name", ui->lineEdit_servername->text());
-        changeSettings(DST_CAVE, "default_server_description", ui->lineEdit_serverDescription->text());
-        changeSettings(DST_CAVE, "max_players", ui->spinBox_serverMaxPlayers->text());
-        ui->radioButton_pvpYes->isChecked() ? changeSettings(DST_CAVE, "pvp", "true") :
-                                              changeSettings(DST_CAVE, "pvp", "false");
-        changeSettings(DST_CAVE, "server_password", ui->lineEdit_serverPassword->text());
-        changeSettings(DST_CAVE, "server_save_slot", ui->comboBox_serverSaveSlot->currentText());
-        changeSettings(DST_CAVE, "server_intention", ui->comboBox_serverIntention->currentText());
-        changeSettings(DST_CAVE, "game_mode", ui->comboBox_gamemode->currentText().toLower());
+        changeINISettings(DST_CAVE, "default_server_name");
+        changeINISettings(DST_CAVE, "default_server_description");
+        changeINISettings(DST_CAVE, "max_players");
+        changeINISettings(DST_CAVE, "pvp");
+        changeINISettings(DST_CAVE, "server_password");
+        changeINISettings(DST_CAVE, "server_save_slot");
+        changeINISettings(DST_CAVE, "server_intention");
+        changeINISettings(DST_CAVE, "game_mode");
         writeINI(DST_CAVE, _dstds_folder + QString("/") + QString(settings_ini));
     }
 
@@ -395,7 +393,7 @@ bool MainWindow::firstServerSetup()
         {
             if(!QFile::copy("template/modoverrides.lua",_dstds_folder + QString("/") + QString(mod_override_lua)))
             {
-                if(QMessageBox::warning(this, "modoverrides.lua Missing", "Looks like you want to enable mods. But the lua file is missing.\nUsing force enable mod is not recommended.\nContinue?", QMessageBox::Yes|QMessageBox::No)
+                if(QMessageBox::warning(this, QTranslator::tr("modoverrides.lua Missing"), QTranslator::tr("Looks like you want to enable mods. But the lua file is missing.\nUsing force enable mod is not recommended.\nContinue?"), QMessageBox::Yes|QMessageBox::No)
                         == QMessageBox::No)
                 {
                     return false;
@@ -414,8 +412,43 @@ bool MainWindow::firstServerSetup()
     return true;
 }
 
-void MainWindow::changeSettings(int world_num, QString name, QString value)
+void MainWindow::changeINISettings(int world_num, QString name)
 {
+    QString value;
+    if(!name.compare("default_server_name"))
+    {
+        value = ui->lineEdit_servername->text();
+    }
+    else if(!name.compare("default_server_description"))
+    {
+        value = ui->lineEdit_serverDescription->text();
+    }
+    else if(!name.compare("max_players"))
+    {
+        value = ui->spinBox_serverMaxPlayers->text();
+    }
+    else if(!name.compare("pvp"))
+    {
+        value = ui->radioButton_pvpYes->isChecked() ? "true" : "false";
+    }
+    else if(!name.compare("server_password"))
+    {
+        value = ui->lineEdit_serverPassword->text();
+    }
+    else if(!name.compare("server_save_slot"))
+    {
+        value = QString::number(ui->comboBox_serverSaveSlot->currentIndex() + 1);
+    }
+    else if(!name.compare("server_intention"))
+    {
+        std::vector<QString> type = {"social","cooperative", "competitive", "madness"};
+        value = type[ui->comboBox_serverIntention->currentIndex()];
+    }
+    else if(!name.compare("game_mode"))
+    {
+        std::vector<QString> type = {"endless","survival", "wilderness"};
+        value = type[ui->comboBox_serverIntention->currentIndex()];
+    }
     for(int i = 0; i < world[world_num].ini.size(); i++)
     {
         properties &p = world[world_num].ini[i];
@@ -482,8 +515,9 @@ bool MainWindow::writeLua(int world_num, QString file_path)
         for(int i = 0; i < world[world_num].pro.size(); i++)
         {
             properties &p = world[world_num].pro[i];
+            std::vector<QString> &s = world[world_num].pro_items[i];
             QComboBox *combo = qobject_cast<QComboBox*>(ui->tableWidget_worldGen->cellWidget(i, 2));
-            p.settings = combo->currentText();
+            p.settings = s[combo->currentIndex()];
         }
 
         genlua.writeLuaFile(world[world_num].pro, world[world_num].pro_items, file_path);
@@ -531,34 +565,34 @@ void MainWindow::on_pushButton_startServer_clicked()
 {
     disableWidgetsWhenStartServer(true);
     //Check token file exists.
-    ui->statusBar->showMessage("Check if token file exists.");
+    ui->statusBar->showMessage(QTranslator::tr("Check if token file exists."));
     QFileInfo checkfile(ui->lineEdit_serverTokenLocation->text());
     if(!(checkfile.exists() && checkfile.isFile()) && !_server_found)
     {
-        QMessageBox::critical(this, "Error", "No token found!");
-        ui->statusBar->showMessage("No server token. Aborting.");
+        QMessageBox::critical(this, QTranslator::tr("Error"), QTranslator::tr("No token found!"));
+        ui->statusBar->showMessage(QTranslator::tr("No server token. Aborting."));
         disableWidgetsWhenStartServer(false);
         return;
     }
 
     //Check if dst exe exists.
-    ui->statusBar->showMessage("Check if don't starve together dedicated server exists.");
+    ui->statusBar->showMessage(QTranslator::tr("Check if don't starve together dedicated server exists."));
     _dstds_exe = ui->lineEdit_dedicatedServerLocation->text() + "/bin/dontstarve_dedicated_server_nullrenderer.exe";
     checkfile.setFile(_dstds_exe);
     if(!(checkfile.exists() && checkfile.isFile()))
     {
-        QMessageBox::critical(this, "Error", "Don't Starve Together Dedicated Server not found!");
-        ui->statusBar->showMessage("No dedicated server executable detected. Aborting.");
+        QMessageBox::critical(this, QTranslator::tr("Error"), QTranslator::tr("Don't Starve Together Dedicated Server not found!"));
+        ui->statusBar->showMessage(QTranslator::tr("No dedicated server executable detected. Aborting."));
         disableWidgetsWhenStartServer(false);
         return;
     }
 
     if(!_server_found)
     {
-        ui->statusBar->showMessage("Creating new server.");
+        ui->statusBar->showMessage(QTranslator::tr("Creating new server."));
         if(!firstServerSetup())
         {
-            ui->statusBar->showMessage("Something went wrong shen creating a new server.");
+            ui->statusBar->showMessage(QTranslator::tr("Something went wrong when creating a new server."));
             disableWidgetsWhenStartServer(false);
             return;
         }
@@ -582,7 +616,7 @@ void MainWindow::on_pushButton_startServer_clicked()
     QStringList startup_cmd;
     //Update server mod
     startup_cmd << "-only_update_server_mods";
-    ui->statusBar->showMessage("Updating server mods.");
+    ui->statusBar->showMessage(QTranslator::tr("Updating server mods."));
     _update_mod.setWorkingDirectory(ui->lineEdit_dedicatedServerLocation->text() + QString("/bin"));
     _update_mod.start(_dstds_exe, startup_cmd);
 }
@@ -600,6 +634,7 @@ void MainWindow::on_pushButton_stopServer_clicked()
         _dst_cave.write("\n");
     }
     disableWidgetsWhenStartServer(false);
+    ui->statusBar->showMessage(QTranslator::tr("Server stopped."));
 }
 
 void MainWindow::on_pushButton_restartServer_clicked()
@@ -611,7 +646,7 @@ void MainWindow::on_lineEdit_worldEdit_returnPressed()
 {
     if(!ui->lineEdit_worldEdit->text().compare("c_shutdown()"))
     {
-        ui->statusBar->showMessage("Please use stop server button or use restart command instead.");
+        ui->statusBar->showMessage(QTranslator::tr("Please use stop server button or use restart command instead."));
         return;
     }
     if(_dst_server.state() == QProcess::Running)
@@ -630,7 +665,7 @@ void MainWindow::on_lineEdit_caveEdit_returnPressed()
 {
     if(!ui->lineEdit_caveEdit->text().compare("c_shutdown()"))
     {
-        ui->statusBar->showMessage("Please use stop server button or use restart command instead.");
+        ui->statusBar->showMessage(QTranslator::tr("Please use stop server button or use restart command instead."));
         return;
     }
     if(_dst_server.state() == QProcess::Running)
@@ -647,49 +682,47 @@ void MainWindow::on_lineEdit_caveEdit_returnPressed()
 
 void MainWindow::on_lineEdit_servername_editingFinished()
 {
-    changeSettings(DST_WORLD, "default_server_name", ui->lineEdit_servername->text());
-    changeSettings(DST_CAVE, "default_server_name", ui->lineEdit_servername->text());
+    changeINISettings(DST_WORLD, "default_server_name");
+    changeINISettings(DST_CAVE, "default_server_name");
 }
 
 void MainWindow::on_lineEdit_serverDescription_editingFinished()
 {
-    changeSettings(DST_WORLD, "default_server_description", ui->lineEdit_serverDescription->text());
-    changeSettings(DST_CAVE, "default_server_description", ui->lineEdit_serverDescription->text());
+    changeINISettings(DST_WORLD, "default_server_description");
+    changeINISettings(DST_CAVE, "default_server_description");
 }
 
 void MainWindow::on_lineEdit_serverPassword_editingFinished()
 {
-    changeSettings(DST_WORLD, "server_password", ui->lineEdit_serverPassword->text());
+    changeINISettings(DST_WORLD, "server_password");
 }
 
 void MainWindow::on_spinBox_serverMaxPlayers_editingFinished()
 {
-    changeSettings(DST_WORLD, "max_players", ui->spinBox_serverMaxPlayers->text());
-    changeSettings(DST_CAVE, "max_players", ui->spinBox_serverMaxPlayers->text());
+    changeINISettings(DST_WORLD, "max_players");
+    changeINISettings(DST_CAVE, "max_players");
 }
 
 void MainWindow::on_radioButton_pvpYes_toggled(bool checked)
 {
-    ui->radioButton_pvpYes->isChecked() ? changeSettings(DST_WORLD, "pvp", "true") :
-                                          changeSettings(DST_WORLD, "pvp", "false");
-    ui->radioButton_pvpYes->isChecked() ? changeSettings(DST_CAVE, "pvp", "true") :
-                                          changeSettings(DST_CAVE, "pvp", "false");
+    changeINISettings(DST_WORLD, "pvp");
+    changeINISettings(DST_CAVE, "pvp");;
 }
 
 void MainWindow::on_comboBox_gamemode_currentIndexChanged(const QString &arg1)
 {
-    changeSettings(DST_WORLD, "game_mode", ui->comboBox_gamemode->currentText().toLower());
-    changeSettings(DST_CAVE, "game_mode", ui->comboBox_gamemode->currentText().toLower());
+    changeINISettings(DST_WORLD, "game_mode");
+    changeINISettings(DST_CAVE, "game_mode");
 }
 
 void MainWindow::on_comboBox_serverSaveSlot_currentIndexChanged(const QString &arg1)
 {
-    changeSettings(DST_WORLD, "server_save_slot", ui->comboBox_serverSaveSlot->currentText());
-    changeSettings(DST_CAVE, "server_save_slot", ui->comboBox_serverSaveSlot->currentText());
+    changeINISettings(DST_WORLD, "server_save_slot");
+    changeINISettings(DST_CAVE, "server_save_slot");
 }
 
 void MainWindow::on_comboBox_serverIntention_currentIndexChanged(const QString &arg1)
 {
-    changeSettings(DST_WORLD, "server_intention", ui->comboBox_serverIntention->currentText());
-    changeSettings(DST_CAVE, "server_intention", ui->comboBox_serverIntention->currentText());
+    changeINISettings(DST_WORLD, "server_intention");
+    changeINISettings(DST_CAVE, "server_intention");
 }

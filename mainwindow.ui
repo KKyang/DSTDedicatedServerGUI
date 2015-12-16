@@ -166,14 +166,14 @@
            <item row="2" column="1">
             <widget class="QLineEdit" name="lineEdit_serverPassword">
              <property name="text">
-              <string>12345</string>
+              <string/>
              </property>
             </widget>
            </item>
            <item row="1" column="1">
             <widget class="QLineEdit" name="lineEdit_serverDescription">
              <property name="text">
-              <string>Yeah!</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -200,7 +200,7 @@
            <item row="0" column="1">
             <widget class="QLineEdit" name="lineEdit_servername">
              <property name="text">
-              <string>A DST Cave Server</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -478,7 +478,7 @@
           <bool>false</bool>
          </property>
          <property name="text">
-          <string>Server data location</string>
+          <string>Server data directory</string>
          </property>
         </widget>
        </item>

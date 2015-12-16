@@ -26,6 +26,7 @@
 #include <QScrollBar>
 #include <QSettings>
 #include <QStandardPaths>
+#include <QTranslator>
 
 #include "ioworldgenoverridelua.h"
 #include "dstdatastructure.h"
@@ -87,7 +88,7 @@ private:
     bool checkServerExists(QString dstds_path, bool reload_template = true);
     bool firstServerSetup();
 
-    void changeSettings(int world_num, QString name, QString value);
+    void changeINISettings(int world_num, QString name);
     bool readINI(int world_num, QString file_path, bool ui_c = false);
     bool writeINI(int world_num, QString file_path);
     void writeINIToGUI(int world_num);
