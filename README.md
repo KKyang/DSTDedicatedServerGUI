@@ -37,6 +37,7 @@ You may need the Visual Studio 2013 Redistributable if lack of vc related DLL: h
 2. Currently adding mods when creating new server is supported, but you'll have to manually edit the modoverrides.lua and put it into the template folder. The app supports updating mods, but you'll have to modify the dedicated_server_mods_setup.lua located at your dedicated server mods directory.
 3. The app automatically search the token file in the default path. You can also assign the path manually.
 4. You'll have to tell the app where the dedicated server's root directory location is.
+5. If you want to use your exist server, rename the world folder to gui_dst_server and rename the cave folder to gui_dst_cave and put them in MyDocument/Klei
 
 ## Future work
 
