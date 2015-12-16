@@ -13,6 +13,7 @@ struct DSTSettings{
     QString world_name;
     std::vector<properties> ini;
     std::vector<properties> pro;
+    std::vector<std::vector<QString>> pro_items;
 };
 
 enum{

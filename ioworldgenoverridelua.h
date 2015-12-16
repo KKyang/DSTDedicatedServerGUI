@@ -11,8 +11,8 @@ class IOWorldGenOverrideLua
 {
 public:
     IOWorldGenOverrideLua();
-    bool readLuaFile(std::vector<properties> &PV, const QString &fileName);
-    bool writeLuaFile(std::vector<properties> &PV, const QString &fileName);
+    bool readLuaFile(std::vector<properties> &PV, std::vector<std::vector<QString> > &IV, const QString &fileName);
+    bool writeLuaFile(std::vector<properties> &PV, std::vector<std::vector<QString>> &IV, const QString &fileName);
 };
 
 #endif // IOWORLDGENOVERRIDELUA_H

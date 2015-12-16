@@ -8,8 +8,8 @@ return {
                mushroom = "default",
        },
        misc = {
-               task_set = "default", -- Biomes: "classic", "cave_default"
-               start_location = "default", -- Start: "plus", "darkness", "caves"
+               task_set = "default", -- Biomes: "default", "classic", "cave_default"
+               start_location = "default", -- Start: "default", "plus", "darkness", "caves"
                autumn = "default", -- "noseason", "veryshortseason", "shortseason", "default", "longseason", "verylongseason", "random"
                boons = "default", -- "never", "rare", "default", "often", "always"
                branching = "default", -- "never", "least", "default", "most"

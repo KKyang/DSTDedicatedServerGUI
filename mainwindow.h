@@ -16,6 +16,7 @@
 
 #include <QMainWindow>
 #include <QButtonGroup>
+#include <QComboBox>
 #include <QDir>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -28,7 +29,6 @@
 
 #include "ioworldgenoverridelua.h"
 #include "dstdatastructure.h"
-
 
 
 

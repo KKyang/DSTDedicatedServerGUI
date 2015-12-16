@@ -238,18 +238,40 @@ void MainWindow::writeLuaToGUI(int world_num)
         t3->setBackground(Qt::lightGray);
         ui->tableWidget_worldGen->setHorizontalHeaderItem(2, t3);
 
+        QString last_group_name;
+        QColor color = Qt::white;
         for(int i = 0; i < world[world_num].pro.size(); i++)
         {
             properties &p = world[world_num].pro[i];
+            std::vector<QString> &items = world[world_num].pro_items[i];
+
+            if(last_group_name.compare(p.group))
+            {
+                color == Qt::white ? color = Qt::lightGray : color = Qt::white;
+            }
+
             QTableWidgetItem* n1 = new QTableWidgetItem(p.group);
             n1->setFlags(n1->flags() & ~Qt::ItemIsEditable);
+            n1->setBackgroundColor(color);
             ui->tableWidget_worldGen->setItem(i, 0, n1);
             QTableWidgetItem* n2 = new QTableWidgetItem(p.name);
             n2->setFlags(n2->flags() & ~Qt::ItemIsEditable);
+            n2->setBackgroundColor(color);
             ui->tableWidget_worldGen->setItem(i, 1, n2);
-            QTableWidgetItem* n3 = new QTableWidgetItem(p.settings);
-            n3->setBackground(Qt::lightGray);
-            ui->tableWidget_worldGen->setItem(i, 2, n3);
+            QComboBox *combo = new QComboBox();
+            //int set_current_settings;
+            for(int j = 0; j < items.size(); j++)
+            {
+                combo->addItem(items[j]);
+                if(!items[j].compare(p.settings))
+                {
+                    combo->setCurrentIndex(j);
+                }
+            }
+            if(_server_found)
+                combo->setEnabled(false);
+            ui->tableWidget_worldGen->setCellWidget(i, 2, combo);
+            last_group_name = p.group;
         }
     }
 }
@@ -273,8 +295,10 @@ bool MainWindow::firstServerSetup()
         }
     }
 
-    //Check if the subfolder exists. Both folder named in dst_server, dst_
+    //Check if the subfolder exists. Both folder named in dst_server, dst_cave
 
+    //World folder
+    QFileInfo checkfile;
     _dstds_folder = ui->lineEdit_serverDataLocation->text() + QString("/") + QString(folder_world);
     if(!checkFolder.exists(_dstds_folder))
     {
@@ -284,8 +308,20 @@ bool MainWindow::firstServerSetup()
             return false;
         }
         checkFolder.mkpath(_dstds_folder);
+    }
+    checkfile.setFile(_dstds_folder + QString("/") + QString(server_token));
+    if(!(checkfile.exists() && checkfile.isFile()))
+    {
         QFile::copy(ui->lineEdit_serverTokenLocation->text(), QString(_dstds_folder + QString("/") + QString(server_token)));
+    }
+    checkfile.setFile(_dstds_folder + QString("/") + QString(override_lua));
+    if(!(checkfile.exists() && checkfile.isFile()))
+    {
         writeLua(DST_WORLD, _dstds_folder + QString("/") + QString(override_lua));
+    }
+    checkfile.setFile(_dstds_folder + QString("/") + QString(settings_ini));
+    if(!(checkfile.exists() && checkfile.isFile()))
+    {
         changeSettings(DST_WORLD, "default_server_name", ui->lineEdit_servername->text());
         changeSettings(DST_WORLD, "default_server_description", ui->lineEdit_serverDescription->text());
         changeSettings(DST_WORLD, "max_players", ui->spinBox_serverMaxPlayers->text());
@@ -295,10 +331,10 @@ bool MainWindow::firstServerSetup()
         changeSettings(DST_WORLD, "server_save_slot", ui->comboBox_serverSaveSlot->currentText());
         changeSettings(DST_WORLD, "server_intention", ui->comboBox_serverIntention->currentText());
         changeSettings(DST_WORLD, "game_mode", ui->comboBox_gamemode->currentText());
-        writeINI(DST_WORLD,_dstds_folder + QString("/") + QString(settings_ini));
-
+        writeINI(DST_WORLD, _dstds_folder + QString("/") + QString(settings_ini));
     }
 
+    //Cave folder
     _dstds_folder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("/Klei/") + QString(folder_cave);
     if(!checkFolder.exists(_dstds_folder))
     {
@@ -307,10 +343,22 @@ bool MainWindow::firstServerSetup()
         {
             return false;
         }
-
         checkFolder.mkpath(_dstds_folder);
-        QFile::copy(ui->lineEdit_serverTokenLocation->text(), _dstds_folder + QString("/") + QString(server_token));
+    }
+    checkfile.setFile(_dstds_folder + QString("/") + QString(server_token));
+    if(!(checkfile.exists() && checkfile.isFile()))
+    {
+        QFile::copy(ui->lineEdit_serverTokenLocation->text(), QString(_dstds_folder + QString("/") + QString(server_token)));
+    }
+
+    checkfile.setFile(_dstds_folder + QString("/") + QString(override_lua));
+    if(!(checkfile.exists() && checkfile.isFile()))
+    {
         writeLua(DST_CAVE, _dstds_folder + QString("/") + QString(override_lua));
+    }
+    checkfile.setFile(_dstds_folder + QString("/") + QString(settings_ini));
+    if(!(checkfile.exists() && checkfile.isFile()))
+    {
         changeSettings(DST_CAVE, "default_server_name", ui->lineEdit_servername->text());
         changeSettings(DST_CAVE, "default_server_description", ui->lineEdit_serverDescription->text());
         changeSettings(DST_CAVE, "max_players", ui->spinBox_serverMaxPlayers->text());
@@ -320,15 +368,14 @@ bool MainWindow::firstServerSetup()
         changeSettings(DST_CAVE, "server_save_slot", ui->comboBox_serverSaveSlot->currentText());
         changeSettings(DST_CAVE, "server_intention", ui->comboBox_serverIntention->currentText());
         changeSettings(DST_CAVE, "game_mode", ui->comboBox_gamemode->currentText().toLower());
-        writeINI(DST_CAVE,_dstds_folder + QString("/") + QString(settings_ini));
-
-
+        writeINI(DST_CAVE, _dstds_folder + QString("/") + QString(settings_ini));
     }
 
+    //Config mods temp
     if(ui->checkBox_useModBool->isChecked())
     {
         _dstds_folder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("/Klei/") + QString(folder_world);
-        QFileInfo checkfile(_dstds_folder + QString("/") + QString(mod_override_lua));
+        checkfile.setFile(_dstds_folder + QString("/") + QString(mod_override_lua));
         if(!(checkfile.exists() && checkfile.isFile()))
         {
             if(!QFile::copy("template/modoverrides.lua",_dstds_folder + QString("/") + QString(mod_override_lua)))
@@ -344,14 +391,7 @@ bool MainWindow::firstServerSetup()
         checkfile.setFile(_dstds_folder + QString("/") + QString(mod_override_lua));
         if(!(checkfile.exists() && checkfile.isFile()))
         {
-            if(!QFile::copy("template/modoverrides.lua",_dstds_folder + QString("/") + QString(mod_override_lua)))
-            {
-                if(QMessageBox::warning(this, "modoverrides.lua Missing", "Looks like you want to enable mods. But the lua file is missing.\nUsing force enable mod is not recommended.\nContinue?", QMessageBox::Yes|QMessageBox::No)
-                        == QMessageBox::No)
-                {
-                    return false;
-                }
-            }
+            QFile::copy("template/modoverrides.lua",_dstds_folder + QString("/") + QString(mod_override_lua));
         }
     }
 
@@ -412,7 +452,7 @@ bool MainWindow::writeINI(int world_num, QString file_path)
 bool MainWindow::readLua(int world_num, QString file_path)
 {
     IOWorldGenOverrideLua genlua;
-    genlua.readLuaFile(world[world_num].pro, file_path);
+    genlua.readLuaFile(world[world_num].pro, world[world_num].pro_items, file_path);
     return true;
 }
 
@@ -422,7 +462,9 @@ bool MainWindow::writeLua(int world_num, QString file_path)
     //QFile file_w(file_path);
     if(world_num == DST_WORLD)
     {
-        return QFile::copy("template/worldgenoverride_world.lua", file_path);
+        IOWorldGenOverrideLua genlua;
+        genlua.writeLuaFile(world[world_num].pro, world[world_num].pro_items, file_path);
+        return true;
     }
     else if(world_num == DST_CAVE)
     {
