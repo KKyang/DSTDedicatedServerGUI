@@ -726,3 +726,62 @@ void MainWindow::on_comboBox_serverIntention_currentIndexChanged(const QString &
     changeINISettings(DST_WORLD, "server_intention");
     changeINISettings(DST_CAVE, "server_intention");
 }
+
+
+//MOD managing
+
+void MainWindow::on_lineEdit_dedicatedServerLocation_editingFinished()
+{
+    readInstalledModLua();
+}
+
+void MainWindow::on_pushButton_rescanMods_clicked()
+{
+    readInstalledModLua();
+}
+
+bool MainWindow::readInstalledModLua()
+{
+    //I don't know how to read the .tex files. So no icon preview.
+    _dstds_exe = ui->lineEdit_dedicatedServerLocation->text();
+    auto&& mods_dir = _dstds_exe + QString("/mods");
+    IOModOverridesLua modluainstall;
+    modluainstall.readInstalledLuaFile(world_mods, mods_dir);
+    return true;
+}
+
+bool MainWindow::readModLua(int world_num, QString file_path)
+{
+    return true;
+}
+
+bool MainWindow::writeModLua(int world_num, QString file_path)
+{
+    return true;
+}
+
+void MainWindow::writeModLuaToGUI(int world_num)
+{
+//    const int preview_size = 100;
+//    QStringList name_filters;
+//    name_filters << "preview.*";
+
+//    ui->tableWidget_modList->setColumnCount(2);
+//    ui->tableWidget_modList->setRowCount(mod_folders.size());
+//    ui->tableWidget_modList->setColumnWidth(0, 20);
+//    ui->tableWidget_modList->setColumnWidth(1, preview_size);
+//    ui->tableWidget_modList->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
+
+//    for(int i = 0; i < mod_folders.size(); i++)
+//    {
+//        ui->tableWidget_modList->setRowHeight(i, preview_size);
+//        QWidget* wdg = new QWidget;
+//        QCheckBox *box = new QCheckBox();
+//        QHBoxLayout *layout = new QHBoxLayout(wdg);
+//        layout->addWidget(box);
+//        layout->setAlignment(Qt::AlignCenter);
+//        layout->setContentsMargins(0,0,0,0);
+//        wdg->setLayout(layout);
+//        ui->tableWidget_modList->setCellWidget(i, 0, wdg);
+//    }
+}

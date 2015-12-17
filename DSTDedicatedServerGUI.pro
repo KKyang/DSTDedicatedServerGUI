@@ -14,11 +14,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ioworldgenoverridelua.cpp
+    ioworldgenoverridelua.cpp \
+    iomodoverrideslua.cpp
 
 HEADERS  += mainwindow.h \
     ioworldgenoverridelua.h \
-    dstdatastructure.h
+    dstdatastructure.h \
+    iomodoverrideslua.h
 
 FORMS    += mainwindow.ui
 

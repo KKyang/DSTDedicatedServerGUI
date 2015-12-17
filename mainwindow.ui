@@ -401,8 +401,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
@@ -506,6 +506,78 @@
      <attribute name="title">
       <string>Mods</string>
      </attribute>
+     <widget class="QTableWidget" name="tableWidget_modList">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>251</width>
+        <height>481</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="tableWidget_modConfigure">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>120</y>
+        <width>521</width>
+        <height>401</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelmodID">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>10</y>
+        <width>47</width>
+        <height>12</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>MOD ID:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_modName">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>30</y>
+        <width>47</width>
+        <height>12</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>(NAME)</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_modAuthor">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>50</y>
+        <width>61</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>(AUTHOR)</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_rescanMods">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>500</y>
+        <width>251</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Rescan</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>

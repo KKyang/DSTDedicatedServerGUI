@@ -28,8 +28,9 @@
 #include <QStandardPaths>
 #include <QTranslator>
 
-#include "ioworldgenoverridelua.h"
 #include "dstdatastructure.h"
+#include "ioworldgenoverridelua.h"
+#include "iomodoverrideslua.h"
 
 
 
@@ -76,6 +77,10 @@ private slots:
 
     void on_comboBox_serverIntention_currentIndexChanged(const QString &arg1);
 
+    void on_pushButton_rescanMods_clicked();
+
+    void on_lineEdit_dedicatedServerLocation_editingFinished();
+
 private:
     Ui::MainWindow *ui;
     //Main app ini settings
@@ -96,6 +101,11 @@ private:
     bool writeLua(int world_num, QString file_path);
     void writeLuaToGUI(int world_num);
 
+    bool readInstalledModLua();
+    bool readModLua(int world_num, QString file_path);
+    bool writeModLua(int world_num, QString file_path);
+    void writeModLuaToGUI(int world_num);
+
     QProcess _update_mod;
     QProcess _dst_server;
     QProcess _dst_cave;
@@ -107,6 +117,7 @@ private:
     QString _server_token;
 
     std::vector<DSTSettings> world;
+    std::vector<mods_properties> world_mods;
 
     //UI
     void disableWidgetsWhenStartServer(bool status);
