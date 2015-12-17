@@ -94,7 +94,7 @@ bool IOWorldGenOverrideLua::readLuaFile(std::vector<properties> &PV, std::vector
                         {
                             properties P;
                             P.group = "Overall";
-                            P.name = "preset";
+                            P.name = segment.split("=")[0].replace(" ","").replace('"',"").replace(',',"");
                             P.settings = data.split("--")[0].split('=')[1].replace(" ","").replace('"',"").replace(',',"");
                             PV.push_back(P);
 

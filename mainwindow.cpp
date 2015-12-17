@@ -738,6 +738,7 @@ void MainWindow::on_lineEdit_dedicatedServerLocation_editingFinished()
 void MainWindow::on_pushButton_rescanMods_clicked()
 {
     readInstalledModLua();
+    writeModLuaToGUI();
 }
 
 bool MainWindow::readInstalledModLua()
@@ -760,28 +761,78 @@ bool MainWindow::writeModLua(int world_num, QString file_path)
     return true;
 }
 
-void MainWindow::writeModLuaToGUI(int world_num)
+void MainWindow::writeModLuaToGUI()
 {
-//    const int preview_size = 100;
-//    QStringList name_filters;
-//    name_filters << "preview.*";
+    const int preview_size = 100;
+    QStringList name_filters;
+    //name_filters << "preview.*";
 
-//    ui->tableWidget_modList->setColumnCount(2);
-//    ui->tableWidget_modList->setRowCount(mod_folders.size());
-//    ui->tableWidget_modList->setColumnWidth(0, 20);
-//    ui->tableWidget_modList->setColumnWidth(1, preview_size);
-//    ui->tableWidget_modList->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
+    ui->tableWidget_modList->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableWidget_modList->setColumnCount(3);
+    ui->tableWidget_modList->setRowCount(world_mods.size());
+    ui->tableWidget_modList->setColumnWidth(0, 20);
+    ui->tableWidget_modList->setColumnWidth(1, preview_size);
+    ui->tableWidget_modList->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
 
-//    for(int i = 0; i < mod_folders.size(); i++)
-//    {
-//        ui->tableWidget_modList->setRowHeight(i, preview_size);
-//        QWidget* wdg = new QWidget;
-//        QCheckBox *box = new QCheckBox();
-//        QHBoxLayout *layout = new QHBoxLayout(wdg);
-//        layout->addWidget(box);
-//        layout->setAlignment(Qt::AlignCenter);
-//        layout->setContentsMargins(0,0,0,0);
-//        wdg->setLayout(layout);
-//        ui->tableWidget_modList->setCellWidget(i, 0, wdg);
-//    }
+    for(int i = 0; i < world_mods.size(); i++)
+    {
+        ui->tableWidget_modList->setRowHeight(i, preview_size);
+        QWidget* wdg = new QWidget;
+        QCheckBox *box = new QCheckBox();
+        QHBoxLayout *layout = new QHBoxLayout(wdg);
+        layout->addWidget(box);
+        layout->setAlignment(Qt::AlignCenter);
+        layout->setContentsMargins(0,0,0,0);
+        wdg->setLayout(layout);
+        ui->tableWidget_modList->setCellWidget(i, 0, wdg);
+
+        mods_properties &mm = world_mods[i];
+        QTableWidgetItem* n3 = new QTableWidgetItem(mm.name);
+        n3->setFlags(n3->flags() & ~Qt::ItemIsEditable);
+        ui->tableWidget_modList->setItem(i, 2, n3);
+
+    }
+}
+
+void MainWindow::on_tableWidget_modList_itemSelectionChanged()
+{
+    mods_properties &mm = world_mods[ui->tableWidget_modList->currentRow()];
+    ui->label_modID->setText(mm.id);
+
+    ui->widget_scrollText->setText(mm.description);
+    ui->label_modName->setText(mm.name);
+    ui->label_modAuthor->setText(mm.author);
+    ui->label_version->setText(mm.version);
+    ui->label_dstComp->setText(mm.dst_compatible ? QString("Yes") : QString("No"));
+    ui->label_forumThread->setText(mm.forumthread);
+    ui->label_allClients->setText(mm.all_clients_require_mod ? QString("Yes") : QString("No"));
+    ui->label_apiVersion->setText(mm.api_version);
+
+    ui->tableWidget_modConfiguration->setColumnCount(3);
+    ui->tableWidget_modConfiguration->setRowCount(mm.conf.size());
+    for(int i = 0; i < mm.conf.size(); i++)
+    {
+        mods_configuration &cc = mm.conf[i];
+        QTableWidgetItem* n1 = new QTableWidgetItem(cc.name);
+        n1->setFlags(n1->flags() & ~Qt::ItemIsEditable);
+        ui->tableWidget_modConfiguration->setItem(i, 0, n1);
+        QTableWidgetItem* n2 = new QTableWidgetItem(cc.label);
+        n2->setFlags(n2->flags() & ~Qt::ItemIsEditable);
+        ui->tableWidget_modConfiguration->setItem(i, 1, n2);
+        QComboBox *combo = new QComboBox();
+        //int set_current_settings;
+        for(int j = 0; j < cc.option_names.size(); j++)
+        {
+            combo->addItem(cc.option_names[j]);
+
+            if(!cc.options[j].compare(cc.settings))
+            {
+                combo->setCurrentIndex(j);
+                combo->setCurrentText(cc.option_names[j] + QString(" (default)"));
+            }
+        }
+        if(_server_found)
+            combo->setEnabled(false);
+        ui->tableWidget_modConfiguration->setCellWidget(i, 2, combo);
+    }
 }

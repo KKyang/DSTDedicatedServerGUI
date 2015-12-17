@@ -15,12 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     ioworldgenoverridelua.cpp \
-    iomodoverrideslua.cpp
+    iomodoverrideslua.cpp \
+    qscrolltext.cpp
 
 HEADERS  += mainwindow.h \
     ioworldgenoverridelua.h \
     dstdatastructure.h \
-    iomodoverrideslua.h
+    iomodoverrideslua.h \
+    qscrolltext.h
 
 FORMS    += mainwindow.ui
 

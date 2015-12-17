@@ -81,6 +81,8 @@ private slots:
 
     void on_lineEdit_dedicatedServerLocation_editingFinished();
 
+    void on_tableWidget_modList_itemSelectionChanged();
+
 private:
     Ui::MainWindow *ui;
     //Main app ini settings
@@ -104,7 +106,7 @@ private:
     bool readInstalledModLua();
     bool readModLua(int world_num, QString file_path);
     bool writeModLua(int world_num, QString file_path);
-    void writeModLuaToGUI(int world_num);
+    void writeModLuaToGUI();
 
     QProcess _update_mod;
     QProcess _dst_server;
