@@ -25,10 +25,45 @@ bool IOWorldGenOverrideLua::readLuaFile(std::vector<properties> &PV, std::vector
                 QString msg;
                 msg = file.readLine();
                 msg = msg.trimmed();
-                if(msg.indexOf("override_enabled = true,") > -1)
+                if(msg.indexOf("preset = ") > -1)
                 {
-                    while(!file.atEnd())
+                    if(msg.contains("preset = "))
                     {
+                        properties P;
+                        P.group = "Overall";
+                        P.name = "preset";
+                        P.settings = msg.split("--")[0].split('=')[1].replace(" ","").replace('"',"").replace(',',"");
+                        PV.push_back(P);
+
+                        std::vector<QString> select;
+                        if(msg.indexOf(QString("-- ")) > 0)
+                        {
+                            msg = msg.split("-- ")[msg.split("-- ").size() - 1];
+#ifdef QT_DEBUG
+                            qDebug() << msg;
+#endif
+                            msg = msg.split(":")[msg.split(":").size() - 1];
+#ifdef QT_DEBUG
+                            qDebug() << msg;
+#endif
+                            QStringList inGroupData = msg.split(",");
+                            for(int i = 0; i < inGroupData.size(); i++)
+                            {
+                                select.push_back(inGroupData[i].replace(" ","").replace('"',""));
+                            }
+                        }
+                        else
+                        {
+                            select.push_back("never");
+                            select.push_back("rare");
+                            select.push_back("default");
+                            select.push_back("often");
+                            select.push_back("always");
+                        }
+                        IV.push_back(select);
+                    }
+                    while(!file.atEnd())
+                    { 
                         QString data = file.readLine().trimmed();
                         QString segment = data.split("--")[0];
                         if(segment.indexOf('{') > -1)
@@ -117,9 +152,23 @@ bool IOWorldGenOverrideLua::writeLuaFile(std::vector<properties> &PV, std::vecto
 
     stream << "return{\n\n";
     stream << " override_enabled = true,\n";
+    properties &pp = PV[0];
+    std::vector<QString> &sss = IV[0];
+    stream << " preset = " << pp.settings << ", -- ";
+    QString show;
+    for(int j = 0; j < sss.size(); j++)
+    {
+        show = show + QString('"') + sss[j] + QString('"');
+        if(j == sss.size() - 1)
+        {
+            break;
+        }
+        show = show + QString(", ");
+    }
+    stream << show << "\n";
 
     QString last_group_name;
-    for(int i = 0; i < PV.size(); i++)
+    for(int i = 1; i < PV.size(); i++)
     {
         properties &p = PV[i];
         std::vector<QString> &ss = IV[i];
@@ -132,7 +181,7 @@ bool IOWorldGenOverrideLua::writeLuaFile(std::vector<properties> &PV, std::vecto
             if(p.group.compare("misc"))
             {
                 stream << "       " << p.group << " = { -- ";
-                QString show;
+                show.clear();
                 for(int j = 0; j < ss.size(); j++)
                 {
                     show = show + QString('"') + ss[j] + QString('"');
