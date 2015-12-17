@@ -31,7 +31,8 @@ bool IOModOverridesLua::readInstalledLuaFile(std::vector<mods_properties> &mods,
             if(file.exists())
             {
                 mods_properties mmp;
-                mmp.client_only_mod = true;
+                mmp.client_only_mod = false;
+                mmp.isEnabled = false;
                 mmp.id = mod_folders[num].split("-")[1];
                 file.open(QIODevice::ReadOnly);
                 while(!file.atEnd())
@@ -129,7 +130,7 @@ bool IOModOverridesLua::readInstalledLuaFile(std::vector<mods_properties> &mods,
                                         }
                                         else if(segment.indexOf("default") > -1)
                                         {
-                                            mmc.settings = data.split("=")[1].replace(",","").replace('"',"").replace(" ","");
+                                            mmc.default_settings = data.split("=")[1].replace(",","").replace('"',"").replace(" ","");
                                         }
                                         else if(segment.indexOf("label") > -1)
                                         {
@@ -146,7 +147,7 @@ bool IOModOverridesLua::readInstalledLuaFile(std::vector<mods_properties> &mods,
                                 if(!mmc.name.isEmpty())
                                 {
         #ifdef QT_DEBUG
-                                qDebug() << mmc.name << " " << mmc.option_names[0] << " " << mmc.options[0] << " " << mmc.settings;
+                                qDebug() << mmc.name << " " << mmc.option_names[0] << " " << mmc.options[0] << " " << mmc.default_settings;
         #endif
                                     mmp.conf.push_back(mmc);
                                 }
@@ -170,12 +171,94 @@ bool IOModOverridesLua::readInstalledLuaFile(std::vector<mods_properties> &mods,
     return true;
 }
 
-bool IOModOverridesLua::readLuaFile(std::vector<QString> &mods, const QString &rootDirectory)
+bool IOModOverridesLua::readLuaFile(std::vector<mods_properties> &mods, const QString &fileName)
 {
+    if(!fileName.isEmpty())
+    {
+        QFile file(fileName);
+        if(file.exists())
+        {
+            file.open(QIODevice::ReadOnly);
+            while(!file.atEnd())
+            {
+                QString msg;
+                msg = file.readLine();
+                msg = msg.trimmed().split("--")[0];
+                if(msg.indexOf("workshop-") > -1)
+                {
+                    QStringList name, value;
+                    QString MODID = msg.split("=")[0].split("-")[1].replace('"',"").replace("]","").replace(" ","");
+                    bool enabled = msg.indexOf("true") > -1 ? true : false;
+                    if(msg.indexOf("}") == - 1)
+                    {
+                        while(!file.atEnd())
+                        {
+                            QString data = file.readLine().trimmed();
+                            QString segment = data.split("--")[0];
+                            if(segment.indexOf("configuration_options") > -1)
+                            {
+
+                                while(!file.atEnd())
+                                {
+                                    data = file.readLine().trimmed();
+                                    segment = data.split("--")[0];
+                                    if(segment.indexOf("}") > - 1)
+                                    {
+                                        break;
+                                    }
+                                    name.push_back(segment.split("=")[0].replace(" ",""));
+                                    value.push_back(segment.split("=")[1].replace(" ","").replace(',',"").replace('"',""));
+                                }
+
+                            }
+                            if(segment.indexOf("}") > - 1)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    int i = 0;
+                    for(i = 0; i < mods.size(); i++)
+                    {
+                        mods_properties &mm = mods[i];
+
+                        if(!mm.id.compare(MODID))
+                        {
+                            if(enabled)
+                            {
+                                mm.isEnabled = true;
+                                for(int j = 0; j < mm.conf.size(); j++)
+                                {
+                                    mods_configuration &cc = mm.conf[j];
+                                    int pos = name.indexOf(cc.name);
+                                    if(pos > -1)
+                                    {
+                                        QString found_value = value.at(pos);
+                                        if(cc.options.indexOf(found_value) > -1)
+                                        {
+                                            cc.settings = found_value;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    if(i == mods.size() + 1)
+                    {
+                        return false;
+                    }
+                }
+
+            }
+        }
+    }
     return true;
 }
 
-bool IOModOverridesLua::writeLuaFile(std::vector<QString> &mods, const QString &rootDirectory)
+bool IOModOverridesLua::writeLuaFile(std::vector<mods_properties> &mods, const QString &rootDirectory)
 {
     return true;
 }

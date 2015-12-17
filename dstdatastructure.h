@@ -13,13 +13,16 @@ struct properties{
 struct mods_configuration{
     QString name;
     QString label;
+    QString default_settings;
     QString settings;
+    QString new_settings;
 
-    std::vector<QString> option_names;
-    std::vector<QString> options;
+    QStringList option_names;
+    QStringList options;
 };
 
 struct mods_properties{
+    bool isEnabled;
     QString id;
     QString name;
     QString description;

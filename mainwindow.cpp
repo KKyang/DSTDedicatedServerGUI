@@ -732,12 +732,21 @@ void MainWindow::on_comboBox_serverIntention_currentIndexChanged(const QString &
 
 void MainWindow::on_lineEdit_dedicatedServerLocation_editingFinished()
 {
-    readInstalledModLua();
+    on_pushButton_rescanMods_clicked();
 }
 
 void MainWindow::on_pushButton_rescanMods_clicked()
 {
     readInstalledModLua();
+    if(_server_found)
+    {
+        _dstds_folder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("/Klei/") + QString(folder_world);
+        readModLua(DST_WORLD, _dstds_folder + QString("/") + QString(mod_override_lua));
+    }
+    else
+    {
+        readModLua(DST_WORLD, QString("template/") + QString(mod_override_lua));
+    }
     writeModLuaToGUI();
 }
 
@@ -753,6 +762,8 @@ bool MainWindow::readInstalledModLua()
 
 bool MainWindow::readModLua(int world_num, QString file_path)
 {
+    IOModOverridesLua modluainstall;
+    modluainstall.readLuaFile(world_mods, file_path);
     return true;
 }
 
@@ -776,6 +787,7 @@ void MainWindow::writeModLuaToGUI()
 
     for(int i = 0; i < world_mods.size(); i++)
     {
+        mods_properties &mm = world_mods[i];
         ui->tableWidget_modList->setRowHeight(i, preview_size);
         QWidget* wdg = new QWidget;
         QCheckBox *box = new QCheckBox();
@@ -784,9 +796,11 @@ void MainWindow::writeModLuaToGUI()
         layout->setAlignment(Qt::AlignCenter);
         layout->setContentsMargins(0,0,0,0);
         wdg->setLayout(layout);
+
+        box->setChecked(mm.isEnabled);
         ui->tableWidget_modList->setCellWidget(i, 0, wdg);
 
-        mods_properties &mm = world_mods[i];
+
         QTableWidgetItem* n3 = new QTableWidgetItem(mm.name);
         n3->setFlags(n3->flags() & ~Qt::ItemIsEditable);
         ui->tableWidget_modList->setItem(i, 2, n3);
@@ -813,6 +827,7 @@ void MainWindow::on_tableWidget_modList_itemSelectionChanged()
     for(int i = 0; i < mm.conf.size(); i++)
     {
         mods_configuration &cc = mm.conf[i];
+
         QTableWidgetItem* n1 = new QTableWidgetItem(cc.name);
         n1->setFlags(n1->flags() & ~Qt::ItemIsEditable);
         ui->tableWidget_modConfiguration->setItem(i, 0, n1);
@@ -824,8 +839,7 @@ void MainWindow::on_tableWidget_modList_itemSelectionChanged()
         for(int j = 0; j < cc.option_names.size(); j++)
         {
             combo->addItem(cc.option_names[j]);
-
-            if(!cc.options[j].compare(cc.settings))
+            if(!cc.options[j].compare(cc.default_settings))
             {
                 combo->setCurrentIndex(j);
                 combo->setCurrentText(cc.option_names[j] + QString(" (default)"));
