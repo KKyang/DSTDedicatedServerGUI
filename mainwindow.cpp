@@ -215,22 +215,22 @@ void MainWindow::writeINIToGUI(int world_num)
         else if(!name.compare("server_save_slot")){ui->comboBox_serverSaveSlot->setCurrentIndex(value.toInt() - 1);}
         else if(!name.compare("server_intention"))
         {
-            if(!name.compare("social"))
+            if(!value.compare("social"))
                 ui->comboBox_serverIntention->setCurrentIndex(0);
-            else if(!name.compare("cooperative"))
+            else if(!value.compare("cooperative"))
                 ui->comboBox_serverIntention->setCurrentIndex(1);
-            else if(!name.compare("competitive"))
+            else if(!value.compare("competitive"))
                 ui->comboBox_serverIntention->setCurrentIndex(2);
-            else if(!name.compare("madness"))
+            else if(!value.compare("madness"))
                 ui->comboBox_serverIntention->setCurrentIndex(3);
         }
         else if(!name.compare("game_mode"))
         {
-            if(!name.compare("endless"))
+            if(!value.compare("endless"))
                 ui->comboBox_gamemode->setCurrentIndex(0);
-            else if(!name.compare("survival"))
+            else if(!value.compare("survival"))
                 ui->comboBox_gamemode->setCurrentIndex(1);
-            else if(!name.compare("wilderness"))
+            else if(!value.compare("wilderness"))
                 ui->comboBox_gamemode->setCurrentIndex(2);
         }
         else if(!name.compare("pvp"))
